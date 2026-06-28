@@ -6,6 +6,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    console.log(`[API Call] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`)
     const user = localStorage.getItem('user')
     if (user) {
       const parsed = JSON.parse(user)
