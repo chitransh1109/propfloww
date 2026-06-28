@@ -467,7 +467,7 @@ function PropertiesListing() {
   useEffect(() => {
     API.get('/properties').then(({ data }) => {
       if (data?.length) {
-        setProperties(data)
+        setProperties([...data, ...BOGUS])
       } else {
         setProperties(BOGUS)
       }
