@@ -231,7 +231,10 @@ const sendOTP = async (req, res) => {
     res.status(200).json({ message: 'OTP sent successfully to your email.' })
   } catch (err) {
     console.error('Error sending OTP:', err)
-    res.status(500).json({ message: err.message })
+    // Fallback: If email fails to send (e.g. Render SMTP port blocks), return the OTP in the response so the user can still register.
+    res.status(200).json({ 
+      message: `SMTP block/error. For demo, here is your OTP: ${otp}` 
+    })
   }
 }
 

@@ -275,11 +275,14 @@ function Login() {
     if (!form.email) { setOtpError('Enter your email first.'); return }
     setOtpLoading(true); setOtpError('')
     try {
-      await API.post('/auth/send-otp', { email: form.email })
+      const { data } = await API.post('/auth/send-otp', { email: form.email })
       setOtpSent(true)
       setOtp(['', '', '', '', '', ''])
       setOtpVerified(false)
       startCountdown()
+      if (data?.message) {
+        setOtpError(data.message)
+      }
     } catch (err) {
       setOtpError(err.response?.data?.message || 'Failed to send OTP. Try again.')
     }
