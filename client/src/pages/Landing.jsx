@@ -195,7 +195,6 @@ const PropertyCard = styled.div`
   position: relative; overflow: hidden; cursor: pointer;
   aspect-ratio: 3/4;
   background: ${C.card};
-  &:hover .overlay { opacity: 1; }
   &:hover img { transform: scale(1.06); }
 `
 const PropertyImg = styled.img`
@@ -203,10 +202,12 @@ const PropertyImg = styled.img`
   transition: transform 0.6s ease; display: block;
 `
 const PropertyOverlay = styled.div`
-  className: overlay;
   position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(10,10,11,0.95) 0%, rgba(10,10,11,0.3) 60%, transparent 100%);
   opacity: 0.7; transition: opacity 0.4s;
+  ${PropertyCard}:hover & {
+    opacity: 1;
+  }
 `
 const PropertyInfo = styled.div`
   position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem;
@@ -611,7 +612,7 @@ export default function Landing() {
             <NavLink onClick={() => goProtected('/properties')}>Properties</NavLink>
             <NavLink onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}>About</NavLink>
             <NavLink onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Contact</NavLink>
-            <NavLink onClick={() => navigate('/login')}>Privacy</NavLink>
+            <NavLink href="mailto:contact@propflow.com">Contact Us</NavLink>
           </NavLinks>
         </FooterTop>
         <FooterBottom>

@@ -344,6 +344,11 @@ const Modal = styled.div`
   &::-webkit-scrollbar { width:3px; }
   &::-webkit-scrollbar-thumb { background:${C.border}; }
 `
+const ConfirmCard = styled.div`
+  background:${C.surface}; border:1px solid ${C.border};
+  width:100%; max-width:400px; padding:2.5rem; text-align:center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+`
 const ModalTitle = styled.h2`
   font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300;
   color:${C.white}; margin-bottom:0.25rem;
@@ -434,7 +439,8 @@ const UploadProgress = styled.div`
 const resolveImg = (url) => {
   if (!url) return null
   if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return `http://localhost:8000${url.startsWith('/') ? '' : '/'}${url}`
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
 function Dashboard() {
@@ -459,6 +465,7 @@ function Dashboard() {
   const [editId, setEditId] = useState(null)
   const [uploadedImages, setUploadedImages] = useState([])
   const [uploadingCount, setUploadingCount] = useState(0)
+  const [deleteTargetId, setDeleteTargetId] = useState(null)
 
   const [form, setForm] = useState({
     title:'', city:'', address:'', type:'apartment', listingType:'sale',
@@ -654,6 +661,12 @@ function Dashboard() {
   }
 
   const closeModal = () => {
+    // Revoke object URLs to prevent memory leaks
+    uploadedImages.forEach(img => {
+      if (img.preview && img.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(img.preview)
+      }
+    })
     setShowModal(false)
     setEditId(null)
     setUploadedImages([])
@@ -665,21 +678,26 @@ function Dashboard() {
   // Buyers get sent to Settings to switch roles instead of hitting a 403 from the API.
   const openAddPropertyModal = () => {
     if (user?.role !== 'owner') {
-      alert("You're currently browsing as a Buyer. Switch to Owner in Settings to list a property.")
-      navigate('/settings')
+      navigate('/settings', { state: { roleNotice: true } })
       return
     }
     setShowModal(true)
   }
 
-  const deleteProperty = async (id) => {
-    if (!window.confirm('Remove this property listing?')) return
+  const deleteProperty = (id) => {
+    setDeleteTargetId(id)
+  }
+
+  const executeDeleteProperty = async () => {
+    if (!deleteTargetId) return
     try {
-      await API.delete(`/properties/${id}`)
-      setProperties(prev => prev.filter(p => p._id !== id))
+      await API.delete(`/properties/${deleteTargetId}`)
+      setProperties(prev => prev.filter(p => p._id !== deleteTargetId))
     } catch (err) {
       console.error('Delete property failed:', err)
       alert(err?.response?.data?.message || 'Failed to delete this listing. Please try again.')
+    } finally {
+      setDeleteTargetId(null)
     }
   }
 
@@ -973,6 +991,19 @@ function Dashboard() {
               </SaveBtn>
             </ModalBtns>
           </Modal>
+        </ModalOverlay>
+      )}
+
+      {deleteTargetId && (
+        <ModalOverlay onClick={() => setDeleteTargetId(null)}>
+          <ConfirmCard onClick={e => e.stopPropagation()}>
+            <ModalTitle style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>Remove Listing?</ModalTitle>
+            <ModalSub style={{ marginBottom: '1.5rem' }}>Are you sure you want to remove this property listing? This action cannot be undone.</ModalSub>
+            <ModalBtns>
+              <CancelBtn onClick={() => setDeleteTargetId(null)}>Cancel</CancelBtn>
+              <SaveBtn style={{ background: '#e05252', color: '#ffffff' }} onClick={executeDeleteProperty}>Yes, Remove</SaveBtn>
+            </ModalBtns>
+          </ConfirmCard>
         </ModalOverlay>
       )}
 

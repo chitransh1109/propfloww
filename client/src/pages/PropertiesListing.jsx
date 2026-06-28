@@ -402,21 +402,22 @@ const EmptyGold = styled.span`color: ${C.gold}; cursor: pointer; text-decoration
 
 // BOGUS DATA
 const BOGUS = [
-  { _id:'b1', title:'Sky Penthouse, Bandra West', city:'Mumbai', type:'apartment', listingType:'sale', bhk:4, area:4200, price:125000000, images:['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&q=80'] },
-  { _id:'b2', title:'The Meridian Residences', city:'Gurugram', type:'apartment', listingType:'sale', bhk:3, area:3100, price:89000000, images:['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&q=80'] },
-  { _id:'b3', title:'Palazzo del Lago Villa', city:'Hyderabad', type:'villa', listingType:'rent', bhk:5, area:5800, price:320000, images:['https://images.unsplash.com/photo-1613977257363-707ba9348227?w=700&q=80'] },
-  { _id:'b4', title:'The Crown, Worli Sea Face', city:'Mumbai', type:'apartment', listingType:'sale', bhk:4, area:3800, price:210000000, images:['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80'] },
-  { _id:'b5', title:'Lutyens Bungalow Estate', city:'Delhi', type:'villa', listingType:'sale', bhk:6, area:8500, price:450000000, images:['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700&q=80'] },
-  { _id:'b6', title:'Prestige Leela Residences', city:'Bengaluru', type:'apartment', listingType:'rent', bhk:3, area:2600, price:185000, images:['https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=700&q=80'] },
-  { _id:'b7', title:'The Oberoi Suites Tower', city:'Pune', type:'apartment', listingType:'sale', bhk:2, area:1800, price:32000000, images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80'] },
-  { _id:'b8', title:'Golf Estate Villa', city:'Gurugram', type:'villa', listingType:'sale', bhk:5, area:6200, price:175000000, images:['https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=80'] },
-  { _id:'b9', title:'Altamount Manor', city:'Mumbai', type:'villa', listingType:'rent', bhk:4, area:4800, price:500000, images:['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=700&q=80'] },
+  { _id:'demo_b1', title:'Sky Penthouse, Bandra West', city:'Mumbai', type:'apartment', listingType:'sale', bhk:4, area:4200, price:125000000, images:['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&q=80'] },
+  { _id:'demo_b2', title:'The Meridian Residences', city:'Gurugram', type:'apartment', listingType:'sale', bhk:3, area:3100, price:89000000, images:['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&q=80'] },
+  { _id:'demo_b3', title:'Palazzo del Lago Villa', city:'Hyderabad', type:'villa', listingType:'rent', bhk:5, area:5800, price:320000, images:['https://images.unsplash.com/photo-1613977257363-707ba9348227?w=700&q=80'] },
+  { _id:'demo_b4', title:'The Crown, Worli Sea Face', city:'Mumbai', type:'apartment', listingType:'sale', bhk:4, area:3800, price:210000000, images:['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80'] },
+  { _id:'demo_b5', title:'Lutyens Bungalow Estate', city:'Delhi', type:'villa', listingType:'sale', bhk:6, area:8500, price:450000000, images:['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=700&q=80'] },
+  { _id:'demo_b6', title:'Prestige Leela Residences', city:'Bengaluru', type:'apartment', listingType:'rent', bhk:3, area:2600, price:185000, images:['https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=700&q=80'] },
+  { _id:'demo_b7', title:'The Oberoi Suites Tower', city:'Pune', type:'apartment', listingType:'sale', bhk:2, area:1800, price:32000000, images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80'] },
+  { _id:'demo_b8', title:'Golf Estate Villa', city:'Gurugram', type:'villa', listingType:'sale', bhk:5, area:6200, price:175000000, images:['https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=80'] },
+  { _id:'demo_b9', title:'Altamount Manor', city:'Mumbai', type:'villa', listingType:'rent', bhk:4, area:4800, price:500000, images:['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=700&q=80'] },
 ]
 
 const resolveImg = (url) => {
   if (!url) return null
   if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return `http://localhost:8000${url.startsWith('/') ? '' : '/'}${url}`
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
 function PropertiesListing() {
@@ -465,8 +466,14 @@ function PropertiesListing() {
 
   useEffect(() => {
     API.get('/properties').then(({ data }) => {
-      if (data?.length) setProperties([...data, ...BOGUS])
-    }).catch(() => {})
+      if (data?.length) {
+        setProperties(data)
+      } else {
+        setProperties(BOGUS)
+      }
+    }).catch(() => {
+      setProperties(BOGUS)
+    })
     
     if (user) {
       API.get('/auth/profile').then(res => {
@@ -489,7 +496,13 @@ function PropertiesListing() {
   const filtered = properties.filter(p => {
     if (filters.city && !p.city?.toLowerCase().includes(filters.city.toLowerCase())) return false
     if (filters.type && p.type !== filters.type) return false
-    if (filters.bhk && String(p.bhk) !== filters.bhk) return false
+    if (filters.bhk) {
+      if (filters.bhk === '4') {
+        if (p.bhk < 4) return false
+      } else {
+        if (String(p.bhk) !== filters.bhk) return false
+      }
+    }
     if (filters.listingType && p.listingType !== filters.listingType) return false
     if (filters.minPrice && p.price < Number(filters.minPrice)) return false
     if (filters.maxPrice && p.price > Number(filters.maxPrice)) return false

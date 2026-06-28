@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import { useAuth } from '../context/AuthContext'
 import axiosInstance from '../api/axios'
@@ -103,9 +103,11 @@ const LogoutBtn = styled.button`
 const Settings = () => {
   const { logout, login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState('')
   const [switching, setSwitching] = useState(false)
+  const [showRoleNotice, setShowRoleNotice] = useState(location.state?.roleNotice || false)
 
   useEffect(() => {
     axiosInstance.get('/auth/profile')
@@ -155,7 +157,11 @@ const Settings = () => {
       <Eyebrow>Account</Eyebrow>
       <PageTitle>Settings</PageTitle>
       <PageSub>Manage your profile and preferences</PageSub>
-      <Divider />
+      {showRoleNotice && (
+        <ErrorMsg style={{ background: 'rgba(212, 175, 55, 0.08)', borderColor: C.gold, color: C.gold }}>
+          You're currently browsing as a Buyer. Switch to Owner below to list a property.
+        </ErrorMsg>
+      )}
 
       {error && <ErrorMsg>{error}</ErrorMsg>}
 
