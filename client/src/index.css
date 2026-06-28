@@ -1,0 +1,50 @@
+/* ── PropFlow Global Styles ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0a0a0b;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Loading Spinner (used by React.lazy Suspense fallback) ── */
+.propflow-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0a0a0b;
+  gap: 1.5rem;
+}
+
+.propflow-loader__brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+}
+
+.propflow-loader__brand span {
+  color: #d4af37;
+}
+
+.propflow-loader__spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(212, 175, 55, 0.15);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: propflow-spin 0.8s linear infinite;
+}
+
+@keyframes propflow-spin {
+  to { transform: rotate(360deg); }
+}
