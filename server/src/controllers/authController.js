@@ -183,13 +183,14 @@ const switchRole = async (req, res) => {
 }
 
 const sendOTP = async (req, res) => {
+  let otp
   try {
     const { email } = req.body
     if (!email) {
       return res.status(400).json({ message: 'Email address is required.' })
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    otp = Math.floor(100000 + Math.random() * 900000).toString()
 
     await Otp.deleteMany({ email: email.toLowerCase() })
     await Otp.create({ email: email.toLowerCase(), otp })
