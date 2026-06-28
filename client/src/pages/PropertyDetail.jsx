@@ -18,8 +18,188 @@ const C = {
 
 /* ── BOGUS FALLBACK DATA ── */
 const BOGUS_PROPERTIES = {
-  b1: { _id:'b1', title:'Sky Penthouse, Bandra West', address:'3, Turner Road, Bandra West', city:'Mumbai', type:'apartment', listingType:'sale', bhk:4, area:4200, price:125000000, status:'available', latitude: 19.0596, longitude: 72.8295, description:'A breathtaking sky penthouse perched atop Mumbai\'s most coveted address. Floor-to-ceiling glass walls frame panoramic views of the Arabian Sea, while interiors by award-winning designer Studio HBA blend contemporary Italian marble with warm teak accents. Features a private rooftop infinity pool, home theatre, and dedicated staff quarters.', amenities:['Infinity Pool','Home Theatre','Concierge','Valet Parking','Gym','Wine Cellar','Smart Home','Jacuzzi'], images:['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80','https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80','https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80'] },
-  b2: { _id:'b2', title:'The Meridian Residences', address:'Golf Course Road, Sector 42', city:'Gurugram', type:'apartment', listingType:'sale', bhk:3, area:3100, price:89000000, status:'available', latitude: 28.4595, longitude: 77.0266, description:'Set within Gurugram\'s most prestigious gated enclave, The Meridian offers a rare blend of privacy and prestige. Each residence features bespoke joinery, imported stone surfaces, and a private sky garden. World-class amenities across 3 acres.', amenities:['Sky Garden','Concierge','Club House','Swimming Pool','Spa','Business Lounge','EV Charging'], images:['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80','https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80','https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80'] },
+  demo_b1: {
+    _id: 'demo_b1',
+    title: 'Sky Penthouse, Bandra West',
+    address: '3, Turner Road, Bandra West',
+    city: 'Mumbai',
+    type: 'apartment',
+    listingType: 'sale',
+    bhk: 4,
+    area: 4200,
+    price: 125000000,
+    status: 'available',
+    latitude: 19.0596,
+    longitude: 72.8295,
+    description: 'A breathtaking sky penthouse perched atop Mumbai\'s most coveted address. Floor-to-ceiling glass walls frame panoramic views of the Arabian Sea, while interiors by award-winning designer Studio HBA blend contemporary Italian marble with warm teak accents. Features a private rooftop infinity pool, home theatre, and dedicated staff quarters.',
+    amenities: ['Infinity Pool', 'Home Theatre', 'Concierge', 'Valet Parking', 'Gym', 'Wine Cellar', 'Smart Home', 'Jacuzzi'],
+    images: [
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80',
+      'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=600&q=80'
+    ]
+  },
+  demo_b2: {
+    _id: 'demo_b2',
+    title: 'The Meridian Residences',
+    address: 'Golf Course Road, Sector 42',
+    city: 'Gurugram',
+    type: 'apartment',
+    listingType: 'sale',
+    bhk: 3,
+    area: 3100,
+    price: 89000000,
+    status: 'available',
+    latitude: 28.4595,
+    longitude: 77.0266,
+    description: 'Set within Gurugram\'s most prestigious gated enclave, The Meridian offers a rare blend of privacy and prestige. Each residence features bespoke joinery, imported stone surfaces, and a private sky garden. World-class amenities across 3 acres.',
+    amenities: ['Sky Garden', 'Concierge', 'Club House', 'Swimming Pool', 'Spa', 'Business Lounge', 'EV Charging'],
+    images: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80',
+      'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=600&q=80'
+    ]
+  },
+  demo_b3: {
+    _id: 'demo_b3',
+    title: 'Palazzo del Lago Villa',
+    address: 'Jubilee Hills, Road No 10',
+    city: 'Hyderabad',
+    type: 'villa',
+    listingType: 'rent',
+    bhk: 5,
+    area: 5800,
+    price: 320000,
+    status: 'available',
+    latitude: 17.4374,
+    longitude: 78.4018,
+    description: 'An exceptional lakeside villa in Hyderabad\'s most exclusive neighbourhood. Spread over 3 expansive floors, the villa includes dual gourmet kitchens, temperature-controlled indoor pool, private home office, and landscaped lawns directly looking out onto the lake.',
+    amenities: ['Lakeside View', 'Indoor Heated Pool', 'Home Office', 'Dual Kitchens', 'Private Elevator', '24/7 Security'],
+    images: [
+      'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200&q=80',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&q=80'
+    ]
+  },
+  demo_b4: {
+    _id: 'demo_b4',
+    title: 'The Crown, Worli Sea Face',
+    address: 'Worli Sea Face',
+    city: 'Mumbai',
+    type: 'apartment',
+    listingType: 'sale',
+    bhk: 4,
+    area: 3800,
+    price: 210000000,
+    status: 'available',
+    latitude: 19.0149,
+    longitude: 72.8130,
+    description: 'Hovering high above the Bandra-Worli Sea Link, The Crown is a masterpiece of contemporary sea-front living. With double-height living room ceilings and wrap-around balconies, you experience unparalleled ocean views from every room.',
+    amenities: ['Sea View', 'Wrap-around Balcony', 'Double-height Ceilings', 'Spa & Sauna', 'Private Gym', '24/7 Concierge'],
+    images: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=600&q=80'
+    ]
+  },
+  demo_b5: {
+    _id: 'demo_b5',
+    title: 'Lutyens Bungalow Estate',
+    address: 'Prithviraj Road, Lutyens',
+    city: 'Delhi',
+    type: 'villa',
+    listingType: 'sale',
+    bhk: 6,
+    area: 8500,
+    price: 450000000,
+    status: 'available',
+    latitude: 28.5997,
+    longitude: 77.2205,
+    description: 'A once-in-a-generation opportunity to own a stately colonial-style bungalow in Delhi\'s ultra-exclusive Lutyens Zone. Sited on over an acre of pristine manicured gardens, the estate features neoclassical columns, grand high-ceiling reception rooms, a private study, and separate staff quarters.',
+    amenities: ['Neoclassical Architecture', 'Private Gardens', 'Colonial Verandah', 'Staff Quarters', 'Stately Library', 'Guard House'],
+    images: [
+      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80'
+    ]
+  },
+  demo_b6: {
+    _id: 'demo_b6',
+    title: 'Prestige Leela Residences',
+    address: 'HAL Old Airport Road',
+    city: 'Bengaluru',
+    type: 'apartment',
+    listingType: 'rent',
+    bhk: 3,
+    area: 2600,
+    price: 185000,
+    status: 'available',
+    latitude: 12.9602,
+    longitude: 77.6482,
+    description: 'Luxury apartments styled after the ornate architectural themes of the Leela Palace. With grand arches, ornate ceilings, and lush landscaped gardens, these residences redefine opulent palace-style living in India\'s IT hub.',
+    amenities: ['Palace-style Interiors', 'Landscaped Courtyard', 'Valet Parking', 'Indoor Pool', 'Billiards Room'],
+    images: [
+      'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=1200&q=80',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80'
+    ]
+  },
+  demo_b7: {
+    _id: 'demo_b7',
+    title: 'The Oberoi Suites Tower',
+    address: 'Koregaon Park',
+    city: 'Pune',
+    type: 'apartment',
+    listingType: 'sale',
+    bhk: 2,
+    area: 1800,
+    price: 32000000,
+    status: 'available',
+    latitude: 18.5362,
+    longitude: 73.8930,
+    description: 'An elegant urban suite in Pune\'s most desirable residential enclave. Perfect for corporate leaders or young professionals, the home blends high-tech convenience with minimalist architecture.',
+    amenities: ['Smart Automation', 'Rooftop Bar', 'Private Gym', 'Steam & Sauna', 'Underground Parking'],
+    images: [
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
+      'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80'
+    ]
+  },
+  demo_b8: {
+    _id: 'demo_b8',
+    title: 'Golf Estate Villa',
+    address: 'Sector 65, Golf Course Road Extension',
+    city: 'Gurugram',
+    type: 'villa',
+    listingType: 'sale',
+    bhk: 5,
+    area: 6200,
+    price: 175000000,
+    status: 'available',
+    latitude: 28.3975,
+    longitude: 77.0658,
+    description: 'A spectacular modern villa bordering a world-class championship golf course. Awash in natural light, the home showcases premium Greek marble floors, designer modular kitchens, and a private glass elevator.',
+    amenities: ['Golf Course View', 'Greek Marble Floors', 'Private Elevator', 'Heated Plunge Pool', 'Solar Backup'],
+    images: [
+      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80',
+      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=600&q=80'
+    ]
+  },
+  demo_b9: {
+    _id: 'demo_b9',
+    title: 'Altamount Manor',
+    address: 'Altamount Road, Cumballa Hill',
+    city: 'Mumbai',
+    type: 'villa',
+    listingType: 'rent',
+    bhk: 4,
+    area: 4800,
+    price: 500000,
+    status: 'available',
+    latitude: 18.9667,
+    longitude: 72.8083,
+    description: 'An absolute masterpiece of private residential luxury nestled on Altamount Road, India\'s billionaire row. Featuring unparalleled skyline views and completely custom high-end millwork throughout.',
+    amenities: ['Skyline Views', 'Bespoke Millwork', 'Heated Pool', 'Wine Cellar', 'Professional Kitchen', 'Bulletproof Glasing'],
+    images: [
+      'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=600&q=80'
+    ]
+  }
 }
 
 const Page = styled.div`
@@ -223,7 +403,8 @@ const LoadingPage = styled.div`
 const resolveImg = (url) => {
   if (!url) return null
   if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return `http://localhost:8000${url.startsWith('/') ? '' : '/'}${url}`
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
 function PropertyDetail() {
