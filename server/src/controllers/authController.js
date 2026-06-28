@@ -195,47 +195,67 @@ const sendOTP = async (req, res) => {
     await Otp.deleteMany({ email: email.toLowerCase() })
     await Otp.create({ email: email.toLowerCase(), otp })
 
-    const transporter = await getTransporter()
-    const isEthereal = transporter.options.host === 'smtp.ethereal.email'
-    const info = await transporter.sendMail({
-      from: '"PropFlow Luxury" <no-reply@propflow.com>',
-      to: email,
-      subject: 'Verify Your Email Address - PropFlow OTP',
-      text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #d4af37; background: #0a0a0b; color: #ffffff;">
-          <h2 style="color: #d4af37; text-align: center; font-family: 'Cormorant Garamond', serif;">PropFlow Private Residences</h2>
-          <p style="color: #a0a0b0;">Thank you for registering on PropFlow. Please use the following One-Time Password (OTP) to complete your email verification:</p>
-          <div style="font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; margin: 30px auto; color: #0a0a0b; background: #d4af37; padding: 15px; max-width: 200px;">
-            ${otp}
-          </div>
-          <p style="color: #7a7a8a; font-size: 13px;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
-          <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin-top: 30px;" />
-          <p style="font-size: 11px; color: #7a7a8a; text-align: center;">PropFlow Elite Real Estate © 2026</p>
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #d4af37; background: #0a0a0b; color: #ffffff;">
+        <h2 style="color: #d4af37; text-align: center; font-family: 'Cormorant Garamond', serif;">PropFlow Private Residences</h2>
+        <p style="color: #a0a0b0;">Thank you for registering on PropFlow. Please use the following One-Time Password (OTP) to complete your email verification:</p>
+        <div style="font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; margin: 30px auto; color: #0a0a0b; background: #d4af37; padding: 15px; max-width: 200px;">
+          ${otp}
         </div>
-      `,
-    })
+        <p style="color: #7a7a8a; font-size: 13px;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+        <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin-top: 30px;" />
+        <p style="font-size: 11px; color: #7a7a8a; text-align: center;">PropFlow Elite Real Estate © 2026</p>
+      </div>
+    `
 
-    if (isEthereal) {
-      const previewUrl = nodemailer.getTestMessageUrl(info)
-      console.log(`\n==================================================`)
-      console.log(`[OTP Sent to Ethereal Mail]`)
-      console.log(`Recipient: ${email}`)
-      console.log(`OTP Code: ${otp}`)
-      console.log(`Preview Email here: ${previewUrl}`)
-      console.log(`==================================================\n`)
-      return res.status(200).json({ 
-        message: `OTP sent successfully. DEVELOPMENT MODE: Since no SMTP variables are set in .env, here is your OTP: ${otp}` 
+    if (process.env.RESEND_API_KEY) {
+      const resendRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: 'onboarding@resend.dev',
+          to: email,
+          subject: 'Verify Your Email Address - PropFlow OTP',
+          html: htmlContent
+        })
       })
+
+      if (!resendRes.ok) {
+        const errText = await resendRes.text()
+        throw new Error(`Resend API error: ${errText}`)
+      }
+    } else {
+      const transporter = await getTransporter()
+      const isEthereal = transporter.options.host === 'smtp.ethereal.email'
+      const info = await transporter.sendMail({
+        from: '"PropFlow Luxury" <no-reply@propflow.com>',
+        to: email,
+        subject: 'Verify Your Email Address - PropFlow OTP',
+        text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
+        html: htmlContent,
+      })
+
+      if (isEthereal) {
+        const previewUrl = nodemailer.getTestMessageUrl(info)
+        console.log(`\n==================================================`)
+        console.log(`[OTP Sent to Ethereal Mail]`)
+        console.log(`Recipient: ${email}`)
+        console.log(`OTP Code: ${otp}`)
+        console.log(`Preview Email here: ${previewUrl}`)
+        console.log(`==================================================\n`)
+        return res.status(200).json({ 
+          message: `OTP sent successfully. DEVELOPMENT MODE: Since no SMTP variables are set in .env, here is your OTP: ${otp}` 
+        })
+      }
     }
 
     res.status(200).json({ message: 'OTP sent successfully to your email.' })
   } catch (err) {
     console.error('Error sending OTP:', err)
-    // Fallback: If email fails to send (e.g. Render SMTP port blocks), return the OTP in the response so the user can still register.
-    res.status(200).json({ 
-      message: `SMTP block/error. For demo, here is your OTP: ${otp}` 
-    })
+    res.status(500).json({ message: 'Failed to send OTP email. Please check your mail setup.' })
   }
 }
 
