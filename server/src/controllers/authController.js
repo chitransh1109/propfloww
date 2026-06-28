@@ -208,48 +208,27 @@ const sendOTP = async (req, res) => {
       </div>
     `
 
-    if (process.env.RESEND_API_KEY) {
-      const resendRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
-        },
-        body: JSON.stringify({
-          from: 'onboarding@resend.dev',
-          to: email,
-          subject: 'Verify Your Email Address - PropFlow OTP',
-          html: htmlContent
-        })
-      })
+    const transporter = await getTransporter()
+    const isEthereal = transporter.options.host === 'smtp.ethereal.email'
+    const info = await transporter.sendMail({
+      from: '"PropFlow Luxury" <no-reply@propflow.com>',
+      to: email,
+      subject: 'Verify Your Email Address - PropFlow OTP',
+      text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
+      html: htmlContent,
+    })
 
-      if (!resendRes.ok) {
-        const errText = await resendRes.text()
-        throw new Error(`Resend API error: ${errText}`)
-      }
-    } else {
-      const transporter = await getTransporter()
-      const isEthereal = transporter.options.host === 'smtp.ethereal.email'
-      const info = await transporter.sendMail({
-        from: '"PropFlow Luxury" <no-reply@propflow.com>',
-        to: email,
-        subject: 'Verify Your Email Address - PropFlow OTP',
-        text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
-        html: htmlContent,
+    if (isEthereal) {
+      const previewUrl = nodemailer.getTestMessageUrl(info)
+      console.log(`\n==================================================`)
+      console.log(`[OTP Sent to Ethereal Mail]`)
+      console.log(`Recipient: ${email}`)
+      console.log(`OTP Code: ${otp}`)
+      console.log(`Preview Email here: ${previewUrl}`)
+      console.log(`==================================================\n`)
+      return res.status(200).json({ 
+        message: `OTP sent successfully. DEVELOPMENT MODE: Since no SMTP variables are set in .env, here is your OTP: ${otp}` 
       })
-
-      if (isEthereal) {
-        const previewUrl = nodemailer.getTestMessageUrl(info)
-        console.log(`\n==================================================`)
-        console.log(`[OTP Sent to Ethereal Mail]`)
-        console.log(`Recipient: ${email}`)
-        console.log(`OTP Code: ${otp}`)
-        console.log(`Preview Email here: ${previewUrl}`)
-        console.log(`==================================================\n`)
-        return res.status(200).json({ 
-          message: `OTP sent successfully. DEVELOPMENT MODE: Since no SMTP variables are set in .env, here is your OTP: ${otp}` 
-        })
-      }
     }
 
     res.status(200).json({ message: 'OTP sent successfully to your email.' })
