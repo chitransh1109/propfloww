@@ -190,62 +190,7 @@ const Divider = styled.div`
 `
 
 
-const OtpRow = styled.div`
-  display: flex; gap: 0.5rem; justify-content: space-between; margin-bottom: 0.75rem;
-`
-const OtpBox = styled.input`
-  width: 42px; height: 48px; text-align: center;
-  background: transparent; border: none; border-bottom: 2px solid ${p => p.$filled ? C.gold : C.borderSubtle};
-  color: ${C.white}; font-size: 1.3rem; font-family: 'Cormorant Garamond', serif;
-  outline: none; transition: all 0.2s;
-  border-radius: 0;
-  &:focus { border-color: ${C.gold}; }
 
-  &:-webkit-autofill,
-  &:-webkit-autofill:hover, 
-  &:-webkit-autofill:focus, 
-  &:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px ${C.surface} inset !important;
-    -webkit-text-fill-color: ${C.white} !important;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-`
-const OtpMeta = styled.div`
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 0.75rem;
-`
-const OtpStatus = styled.div`
-  font-size: 0.7rem; color: ${p => p.$ok ? '#4ade80' : C.muted}; letter-spacing: 0.08em;
-`
-const OtpResend = styled.span`
-  font-size: 0.7rem; color: ${p => p.$disabled ? C.muted : C.gold};
-  cursor: ${p => p.$disabled ? 'not-allowed' : 'pointer'};
-  letter-spacing: 0.08em; text-transform: uppercase;
-  pointer-events: ${p => p.$disabled ? 'none' : 'auto'};
-`
-const OtpVerifyBtn = styled.button`
-  width: 100%; padding: 0.65rem; background: transparent;
-  border: 1px solid ${C.gold}; color: ${C.gold};
-  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem;
-  &:hover { background: rgba(212,175,55,0.08); }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
-`
-const SendOtpBtn = styled.button`
-  padding: 0.6rem 1rem; background: transparent;
-  border: 1px solid ${C.gold}; color: ${C.gold};
-  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
-  &:hover { background: rgba(212,175,55,0.08); }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
-`
-const EmailRow = styled.div`display: flex; gap: 0.5rem; align-items: flex-end;`
-const VerifiedBadge = styled.div`
-  display: flex; align-items: center; gap: 0.4rem;
-  font-size: 0.7rem; color: #4ade80; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.4rem 0.75rem; border: 1px solid rgba(74,222,128,0.3);
-  background: rgba(74,222,128,0.06);
-`
 
 function Login() {
   const navigate = useNavigate()
@@ -255,67 +200,11 @@ function Login() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'buyer' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
-  const [otpVerified, setOtpVerified] = useState(false)
-  const [otpError, setOtpError] = useState('')
-  const [otpLoading, setOtpLoading] = useState(false)
-  const [countdown, setCountdown] = useState(0)
-
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
-
-  const startCountdown = () => {
-    setCountdown(30)
-    const t = setInterval(() => {
-      setCountdown(c => { if (c <= 1) { clearInterval(t); return 0 } return c - 1 })
-    }, 1000)
-  }
-
-  const sendOTP = async () => {
-    if (!form.email) { setOtpError('Enter your email first.'); return }
-    setOtpLoading(true); setOtpError('')
-    try {
-      await API.post('/auth/send-otp', { email: form.email })
-      setOtpSent(true)
-      setOtp(['', '', '', '', '', ''])
-      setOtpVerified(false)
-      startCountdown()
-    } catch (err) {
-      setOtpError(err.response?.data?.message || 'Failed to send OTP. Try again.')
-    }
-    setOtpLoading(false)
-  }
-
-  const handleOtpInput = (idx, val) => {
-    if (!/^[0-9]?$/.test(val)) return
-    const next = [...otp]
-    next[idx] = val
-    setOtp(next)
-    if (val && idx < 5) document.getElementById('otp-' + (idx + 1))?.focus()
-  }
-
-  const handleOtpKey = (idx, e) => {
-    if (e.key === 'Backspace' && !otp[idx] && idx > 0) document.getElementById('otp-' + (idx - 1))?.focus()
-  }
-
-  const verifyOTP = async () => {
-    const code = otp.join('')
-    if (code.length !== 6) { setOtpError('Enter all 6 digits.'); return }
-    setOtpLoading(true); setOtpError('')
-    try {
-      await API.post('/auth/verify-otp', { email: form.email, otp: code })
-      setOtpVerified(true)
-      setOtpError('')
-    } catch (err) {
-      setOtpError(err.response?.data?.message || 'Invalid or expired OTP.')
-    }
-    setOtpLoading(false)
-  }
 
   const validate = () => {
     if (!form.email || !form.password) return 'Email and password are required.'
     if (mode === 'register' && !form.name) return 'Name is required.'
-    if (mode === 'register' && !otpVerified) return 'Please verify your email address via OTP first.'
     if (form.password.length < 6) return 'Password must be at least 6 characters.'
     return ''
   }
@@ -326,7 +215,7 @@ function Login() {
     setLoading(true); setError('')
     try {
       const endpoint = mode === 'login' ? '/auth/login' : '/auth/register'
-      const payload = mode === 'login' ? form : { ...form, otp: otp.join('') }
+      const payload = form
       const { data } = await API.post(endpoint, payload)
       login(data)
       const from = location.state?.from || '/properties'
@@ -392,63 +281,12 @@ function Login() {
               </Group>
             )}
 
-            {mode === 'login' ? (
-              <Group>
-                <Label>Email Address</Label>
-                <Input type="email" placeholder="you@example.com" value={form.email}
-                  onChange={e => f('email', e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
-              </Group>
-            ) : (
-              <>
-                <Group>
-                  <Label>Email Address</Label>
-                  <EmailRow>
-                    <Input type="email" placeholder="you@example.com" value={form.email}
-                      onChange={e => { f('email', e.target.value); setOtpSent(false); setOtpVerified(false); setOtp(['','','','','','']) }}
-                      onKeyDown={e => e.key === 'Enter' && handleSubmit()} style={{ flex: 1 }} />
-                    {!otpVerified && (
-                      <SendOtpBtn onClick={sendOTP} disabled={otpLoading || countdown > 0}>
-                        {otpLoading ? '...' : otpSent ? `Resend${countdown > 0 ? ' ' + countdown + 's' : ''}` : 'Send OTP'}
-                      </SendOtpBtn>
-                    )}
-                  </EmailRow>
-                  {otpVerified && (
-                    <VerifiedBadge style={{ marginTop: '0.5rem' }}>✓ Email Verified</VerifiedBadge>
-                  )}
-                </Group>
-
-                {otpSent && !otpVerified && (
-                  <Group>
-                    <Label>Enter OTP · Sent to your email</Label>
-                    <OtpRow>
-                      {otp.map((digit, idx) => (
-                        <OtpBox
-                          key={idx}
-                          id={'otp-' + idx}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={1}
-                          value={digit}
-                          $filled={!!digit}
-                          onChange={e => handleOtpInput(idx, e.target.value)}
-                          onKeyDown={e => handleOtpKey(idx, e)}
-                        />
-                      ))}
-                    </OtpRow>
-                    <OtpMeta>
-                      <OtpStatus>{otpError || 'OTP valid for 10 minutes'}</OtpStatus>
-                      <OtpResend $disabled={countdown > 0} onClick={sendOTP}>
-                        {countdown > 0 ? 'Resend in ' + countdown + 's' : 'Resend OTP'}
-                      </OtpResend>
-                    </OtpMeta>
-                    <OtpVerifyBtn onClick={verifyOTP} disabled={otp.join('').length !== 6}>
-                      Verify OTP
-                    </OtpVerifyBtn>
-                  </Group>
-                )}
-              </>
-            )}
+            <Group>
+              <Label>Email Address</Label>
+              <Input type="email" placeholder="you@example.com" value={form.email}
+                onChange={e => f('email', e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+            </Group>
 
             <Group>
               <Label>Password</Label>

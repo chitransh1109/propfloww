@@ -1,76 +1,13 @@
 const User = require('../models/user')
 const generateToken = require('../utils/generateToken')
-const Otp = require('../models/otp')
-const nodemailer = require('nodemailer')
 
-const getTransporter = async () => {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 8000,
-    })
-  }
-
-  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    // Using host: 'smtp.gmail.com' and port: 587 is required because Render blocks port 465
-    return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 8000,
-    })
-  }
-
-  // Avoid creating Ethereal test account in production to prevent timeout/hangs
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('SMTP credentials are not configured in environment variables.')
-  }
-
-  const testAccount = await nodemailer.createTestAccount()
-  return nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-    connectionTimeout: 8000,
-    greetingTimeout: 8000,
-    socketTimeout: 8000,
-  })
-}
 
 const register = async (req, res) => {
   try {
-    const { name, password, role, otp } = req.body
+    const { name, password, role } = req.body
     const email = req.body.email?.toLowerCase().trim()
 
-    // 1. Enforce OTP verification
-    if (!otp) {
-      return res.status(400).json({ message: 'Email verification via OTP is mandatory.' })
-    }
-
-    const otpRecord = await Otp.findOne({ email, otp })
-    if (!otpRecord) {
-      return res.status(400).json({ message: 'Invalid or expired OTP. Please verify your email first.' })
-    }
-
-    // OTP matches, verify if user already exists
+    // Verify if user already exists
     const exists = await User.findOne({ email })
     if (exists) {
       return res.status(400).json({ message: 'Email already registered' })
@@ -83,9 +20,6 @@ const register = async (req, res) => {
       password,
       role: role || 'buyer',
     })
-
-    // Clean up all OTPs for this email address
-    await Otp.deleteMany({ email })
 
     res.status(201).json({
       _id: user._id,
@@ -182,110 +116,10 @@ const switchRole = async (req, res) => {
   }
 }
 
-const sendOTP = async (req, res) => {
-  let otp
-  try {
-    const { email } = req.body
-    if (!email) {
-      return res.status(400).json({ message: 'Email address is required.' })
-    }
-
-    otp = Math.floor(100000 + Math.random() * 900000).toString()
-
-    await Otp.deleteMany({ email: email.toLowerCase() })
-    await Otp.create({ email: email.toLowerCase(), otp })
-
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #d4af37; background: #0a0a0b; color: #ffffff;">
-        <h2 style="color: #d4af37; text-align: center; font-family: 'Cormorant Garamond', serif;">PropFlow Private Residences</h2>
-        <p style="color: #a0a0b0;">Thank you for registering on PropFlow. Please use the following One-Time Password (OTP) to complete your email verification:</p>
-        <div style="font-size: 28px; font-weight: bold; letter-spacing: 6px; text-align: center; margin: 30px auto; color: #0a0a0b; background: #d4af37; padding: 15px; max-width: 200px;">
-          ${otp}
-        </div>
-        <p style="color: #7a7a8a; font-size: 13px;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
-        <hr style="border: none; border-top: 1px solid rgba(212,175,55,0.2); margin-top: 30px;" />
-        <p style="font-size: 11px; color: #7a7a8a; text-align: center;">PropFlow Elite Real Estate © 2026</p>
-      </div>
-    `
-
-    if (process.env.POSTMARK_SERVER_TOKEN) {
-      const postmarkRes = await fetch('https://api.postmarkapp.com/email', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-Postmark-Server-Token': process.env.POSTMARK_SERVER_TOKEN
-        },
-        body: JSON.stringify({
-          From: process.env.EMAIL_USER || 'yadavchitransh355@gmail.com', // Must match your confirmed sender signature in Postmark
-          To: email,
-          Subject: 'Verify Your Email Address - PropFlow OTP',
-          HtmlBody: htmlContent,
-          TextBody: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
-          MessageStream: 'outbound'
-        })
-      })
-
-      if (!postmarkRes.ok) {
-        const errText = await postmarkRes.text()
-        throw new Error(`Postmark API error: ${errText}`)
-      }
-    } else {
-      const transporter = await getTransporter()
-      const isEthereal = transporter.options.host === 'smtp.ethereal.email'
-      const info = await transporter.sendMail({
-        from: '"PropFlow Luxury" <no-reply@propflow.com>',
-        to: email,
-        subject: 'Verify Your Email Address - PropFlow OTP',
-        text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
-        html: htmlContent,
-      })
-
-      if (isEthereal) {
-        const previewUrl = nodemailer.getTestMessageUrl(info)
-        console.log(`\n==================================================`)
-        console.log(`[OTP Sent to Ethereal Mail]`)
-        console.log(`Recipient: ${email}`)
-        console.log(`OTP Code: ${otp}`)
-        console.log(`Preview Email here: ${previewUrl}`)
-        console.log(`==================================================\n`)
-        return res.status(200).json({ 
-          message: `OTP sent successfully. DEVELOPMENT MODE: Since no SMTP variables are set in .env, here is your OTP: ${otp}` 
-        })
-      }
-    }
-
-    res.status(200).json({ message: 'OTP sent successfully to your email.' })
-  } catch (err) {
-    console.error('Error sending OTP:', err)
-    res.status(500).json({ message: 'Failed to send OTP email. Please check your mail setup.' })
-  }
-}
-
-const verifyOTP = async (req, res) => {
-  try {
-    const { email, otp } = req.body
-    if (!email || !otp) {
-      return res.status(400).json({ message: 'Email and OTP are required.' })
-    }
-
-    const record = await Otp.findOne({ email: email.toLowerCase(), otp })
-    if (!record) {
-      return res.status(400).json({ message: 'Invalid or expired OTP.' })
-    }
-
-    res.status(200).json({ verified: true, message: 'Email verified successfully.' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-}
-
 module.exports = {
   register,
   login,
   getProfile,
   toggleSaveProperty,
   switchRole,
-  sendOTP,
-  verifyOTP,
 }
