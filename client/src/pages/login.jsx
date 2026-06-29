@@ -326,6 +326,15 @@ function Login() {
     }
   }, [])
 
+  // Load location redirect state messages
+  useEffect(() => {
+    if (location.state?.error) {
+      setError(location.state.error)
+    } else if (location.state?.message) {
+      setSuccess(location.state.message)
+    }
+  }, [location.state])
+
   const f = (k, v) => {
     setForm(p => ({ ...p, [k]: v }))
     // Clear inline error as user types
@@ -400,8 +409,13 @@ function Login() {
             navigate(from)
           }, 2500)
         } else {
-          login(data)
           const from = location.state?.from || '/properties'
+          if (from === '/admin' && data.role !== 'admin') {
+            setError('Access denied. Administrator privileges required to log in here.')
+            setLoading(false)
+            return
+          }
+          login(data)
           navigate(from)
         }
       }

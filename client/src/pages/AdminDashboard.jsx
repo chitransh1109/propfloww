@@ -165,8 +165,10 @@ export default function AdminDashboard() {
 
   // Verify Admin Access
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/properties')
+    if (!user) {
+      navigate('/login', { state: { from: '/admin', error: 'Admin access required. Please sign in.' } })
+    } else if (user.role !== 'admin') {
+      navigate('/login', { state: { from: '/admin', error: 'Access denied. Administrator privileges required.' } })
     }
   }, [user, navigate])
 
