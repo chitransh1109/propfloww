@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import API from '../api/axios'
-import { useAuth } from '../context/AuthContext'
 
 const fadeUp = keyframes`from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}`
 const pulseGlow = keyframes`0%{box-shadow:0 0 12px rgba(212,175,55,0.15);}50%{box-shadow:0 0 24px rgba(212,175,55,0.3);}100%{box-shadow:0 0 12px rgba(212,175,55,0.15);}`
@@ -186,9 +185,13 @@ const SubmitBtn = styled.button`
 `
 
 export default function AdminDashboard() {
-  const { user } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('stats')
+
+  const [adminSession, setAdminSession] = useState(() => {
+    const stored = sessionStorage.getItem('adminUser')
+    return stored ? JSON.parse(stored) : null
+  })
 
   const [stats, setStats] = useState(null)
   const [users, setUsers] = useState([])
@@ -201,6 +204,11 @@ export default function AdminDashboard() {
   const [adminPassword, setAdminPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [loggingIn, setLoggingIn] = useState(false)
+
+  const getHeaders = () => {
+    const token = sessionStorage.getItem('adminToken')
+    return { headers: { Authorization: `Bearer ${token}` } }
+  }
 
   const handleAdminLogin = async () => {
     if (!adminEmail || !adminPassword) {
@@ -222,7 +230,9 @@ export default function AdminDashboard() {
         return
       }
 
-      login(data)
+      sessionStorage.setItem('adminToken', data.token)
+      sessionStorage.setItem('adminUser', JSON.stringify(data))
+      setAdminSession(data)
     } catch (err) {
       setLoginError(err.response?.data?.message || 'Invalid email or password.')
     } finally {
@@ -232,7 +242,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const { data } = await API.get('/admin/stats')
+      const { data } = await API.get('/admin/stats', getHeaders())
       setStats(data)
     } catch (err) {
       setError('Failed to fetch platform statistics.')
@@ -241,7 +251,7 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await API.get('/admin/users')
+      const { data } = await API.get('/admin/users', getHeaders())
       setUsers(data)
     } catch (err) {
       setError('Failed to load user accounts.')
@@ -250,7 +260,7 @@ export default function AdminDashboard() {
 
   const fetchProperties = async () => {
     try {
-      const { data } = await API.get('/admin/properties')
+      const { data } = await API.get('/admin/properties', getHeaders())
       setProperties(data)
     } catch (err) {
       setError('Failed to load property listings.')
@@ -258,15 +268,17 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    if (activeTab === 'stats') fetchStats()
-    if (activeTab === 'users') fetchUsers()
-    if (activeTab === 'properties') fetchProperties()
-  }, [activeTab])
+    if (adminSession) {
+      if (activeTab === 'stats') fetchStats()
+      if (activeTab === 'users') fetchUsers()
+      if (activeTab === 'properties') fetchProperties()
+    }
+  }, [activeTab, adminSession])
 
   const handleRoleChange = async (userId, role) => {
     setError(''); setSuccess('')
     try {
-      await API.put(`/admin/users/${userId}/role`, { role })
+      await API.put(`/admin/users/${userId}/role`, { role }, getHeaders())
       setSuccess('User role updated successfully.')
       fetchUsers()
     } catch (err) {
@@ -278,7 +290,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you absolutely sure you want to delete this user? All their property listings will be permanently deleted.')) return
     setError(''); setSuccess('')
     try {
-      await API.delete(`/admin/users/${userId}`)
+      await API.delete(`/admin/users/${userId}`, getHeaders())
       setSuccess('User and their listings deleted successfully.')
       fetchUsers()
     } catch (err) {
@@ -290,7 +302,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) return
     setError(''); setSuccess('')
     try {
-      await API.delete(`/admin/properties/${propId}`)
+      await API.delete(`/admin/properties/${propId}`, getHeaders())
       setSuccess('Property listing removed successfully.')
       fetchProperties()
     } catch (err) {
@@ -311,7 +323,7 @@ export default function AdminDashboard() {
     return `₹${p.toLocaleString()}`
   }
 
-  const isAdmin = user && user.role === 'admin'
+  const isAdmin = adminSession && adminSession.role === 'admin'
 
   if (!isAdmin) {
     return (
@@ -436,7 +448,7 @@ export default function AdminDashboard() {
                       </span>
                     </Td>
                     <Td>
-                      {u._id !== user._id ? (
+                      {u._id !== adminSession._id ? (
                         <Select 
                           value={u.role} 
                           onChange={(e) => handleRoleChange(u._id, e.target.value)}
@@ -450,7 +462,7 @@ export default function AdminDashboard() {
                       )}
                     </Td>
                     <Td style={{ textAlign: 'right' }}>
-                      {u._id !== user._id && (
+                      {u._id !== adminSession._id && (
                         <ActionBtn 
                           danger 
                           onClick={() => handleDeleteUser(u._id)}

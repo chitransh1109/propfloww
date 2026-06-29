@@ -409,13 +409,8 @@ function Login() {
             navigate(from)
           }, 2500)
         } else {
-          const from = location.state?.from || '/properties'
-          if (from === '/admin' && data.role !== 'admin') {
-            setError('Access denied. Administrator privileges required to log in here.')
-            setLoading(false)
-            return
-          }
           login(data)
+          const from = location.state?.from || '/properties'
           navigate(from)
         }
       }
