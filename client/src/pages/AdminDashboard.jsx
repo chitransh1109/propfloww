@@ -151,6 +151,40 @@ const DefaultAvatar = styled.div`
   font-size: 0.8rem; font-weight: 600;
 `
 
+const ReAuthWrapper = styled.div`
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 60vh; animation: ${fadeUp} 0.5s ease both;
+`
+const ReAuthCard = styled.div`
+  background: ${C.card}; border: 1px solid ${C.border};
+  width: 100%; max-width: 400px; padding: 3rem 2.5rem;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+`
+const ReAuthTitle = styled.h3`
+  font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300;
+  color: ${C.white}; margin-bottom: 0.5rem; text-align: center;
+`
+const ReAuthSub = styled.p`
+  color: ${C.muted}; font-size: 0.82rem; margin-bottom: 2rem; text-align: center; line-height: 1.5;
+`
+const ReAuthInput = styled.input`
+  width: 100%; padding: 0.85rem 1rem; margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.02); border: 1px solid ${p => p.$hasError ? C.error : 'rgba(255, 255, 255, 0.06)'};
+  color: ${C.white}; font-size: 0.9rem; outline: none; box-sizing: border-box;
+  font-family: 'Inter', sans-serif; border-radius: 4px;
+  &:focus { border-color: ${C.gold}; background: rgba(212,175,55,0.03); }
+`
+const SubmitBtn = styled.button`
+  width: 100%; padding: 1rem;
+  background: ${C.gold}; border: none;
+  color: ${C.obsidian}; font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  &:hover { background: ${C.goldLight}; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,175,55,0.3); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+`
+
 export default function AdminDashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -162,6 +196,32 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  const [isVerified, setIsVerified] = useState(false)
+  const [verifyPassword, setVerifyPassword] = useState('')
+  const [verifyError, setVerifyError] = useState('')
+  const [verifying, setVerifying] = useState(false)
+
+  const handleVerify = async () => {
+    if (!verifyPassword) {
+      setVerifyError('Please enter your password.')
+      return
+    }
+    setVerifying(true)
+    setVerifyError('')
+
+    try {
+      await API.post('/auth/login', {
+        email: user.email,
+        password: verifyPassword
+      })
+      setIsVerified(true)
+    } catch (err) {
+      setVerifyError(err.response?.data?.message || 'Verification failed. Invalid password.')
+    } finally {
+      setVerifying(false)
+    }
+  }
 
   // Verify Admin Access
   useEffect(() => {
@@ -251,6 +311,33 @@ export default function AdminDashboard() {
     if (p >= 10000000) return `₹${(p/10000000).toFixed(2)} Cr`
     if (p >= 100000) return `₹${(p/100000).toFixed(1)} L`
     return `₹${p.toLocaleString()}`
+  }
+
+  if (!user || user.role !== 'admin') {
+    return null
+  }
+
+  if (!isVerified) {
+    return (
+      <ReAuthWrapper>
+        <ReAuthCard>
+          <ReAuthTitle>Admin Verification</ReAuthTitle>
+          <ReAuthSub>Please verify your administrator password to unlock platform control.</ReAuthSub>
+          {verifyError && <ErrorMsg>{verifyError}</ErrorMsg>}
+          <ReAuthInput 
+            type="password" 
+            placeholder="Verify Password" 
+            value={verifyPassword} 
+            $hasError={!!verifyError}
+            onChange={e => setVerifyPassword(e.target.value)} 
+            onKeyDown={e => e.key === 'Enter' && handleVerify()}
+          />
+          <SubmitBtn onClick={handleVerify} disabled={verifying}>
+            {verifying ? 'Verifying…' : 'Unlock Dashboard'}
+          </SubmitBtn>
+        </ReAuthCard>
+      </ReAuthWrapper>
+    )
   }
 
   return (
