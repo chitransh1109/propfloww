@@ -3,12 +3,31 @@ import styled, { keyframes } from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-
-
+// ── ANIMATIONS ──────────────────────────────────────────
 const fadeUp = keyframes`from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); }`
 const shimmer = keyframes`0%,100% { opacity: 0.4; } 50% { opacity: 1; }`
 const float = keyframes`0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); }`
 const lineGrow = keyframes`from { width: 0; } to { width: 80px; }`
+const scanline = keyframes`
+  0% { top: -10%; }
+  100% { top: 110%; }
+`
+const glitch = keyframes`
+  0%, 100% { transform: translate(0); text-shadow: none; }
+  92% { transform: translate(0); text-shadow: none; }
+  93% { transform: translate(-2px, 1px); text-shadow: 2px 0 #00ffff, -2px 0 #d4af37; }
+  94% { transform: translate(1px, -1px); text-shadow: -1px 0 #00ffff, 1px 0 #d4af37; }
+  95% { transform: translate(0); text-shadow: none; }
+`
+const shimmerText = keyframes`
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+`
+const marquee = keyframes`from { transform: translateX(0); } to { transform: translateX(-50%); }`
+const borderPulse = keyframes`
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+`
 
 // ── TOKENS ──────────────────────────────────────────────
 const C = {
@@ -17,21 +36,25 @@ const C = {
   surface: '#16161a',
   card: '#1c1c22',
   border: 'rgba(212,175,55,0.15)',
+  borderSubtle: 'rgba(255,255,255,0.07)',
   gold: '#d4af37',
   goldLight: '#f0d060',
   goldMuted: 'rgba(212,175,55,0.6)',
   cream: '#f5f0e8',
   muted: '#7a7a8a',
   white: '#ffffff',
+  cyan: '#00f0ff',
 }
 
 // ── NAV ─────────────────────────────────────────────────
 const Nav = styled.nav`
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 1.5rem 5vw;
-  background: linear-gradient(to bottom, rgba(10,10,11,0.95), transparent);
-  backdrop-filter: blur(12px);
+  padding: ${p => p.$scrolled ? '1rem 5vw' : '1.5rem 5vw'};
+  background: ${p => p.$scrolled ? 'rgba(10,10,11,0.92)' : 'transparent'};
+  border-bottom: ${p => p.$scrolled ? `1px solid ${C.border}` : '1px solid transparent'};
+  backdrop-filter: ${p => p.$scrolled ? 'blur(20px)' : 'none'};
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 `
 const Logo = styled.div`
   font-family: 'Cormorant Garamond', serif;
@@ -45,8 +68,16 @@ const NavLinks = styled.div`
 const NavLink = styled.a`
   color: ${C.muted}; font-size: 0.82rem; font-weight: 500;
   letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
-  cursor: pointer; transition: color 0.3s;
+  cursor: pointer; position: relative; padding-bottom: 4px;
+  transition: color 0.3s;
   &:hover { color: ${C.gold}; }
+  &::after {
+    content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+    background: ${C.gold}; transition: width 0.3s ease;
+  }
+  &:hover::after {
+    width: 100%;
+  }
 `
 const NavCTA = styled.button`
   padding: 0.6rem 1.6rem;
@@ -55,6 +86,7 @@ const NavCTA = styled.button`
   color: ${C.gold};
   font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
   cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { background: ${C.gold}; color: ${C.obsidian}; }
 `
 
@@ -67,16 +99,43 @@ const HeroSection = styled.section`
 const HeroBg = styled.div`
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(212,175,55,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,175,55,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(212,175,55,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,240,255,0.02) 0%, transparent 50%);
+  z-index: 1;
 `
 const HeroGrid = styled.div`
-  position: absolute; inset: 0; opacity: 0.04;
+  position: absolute; inset: 0; opacity: 0.03;
   background-image: linear-gradient(${C.gold} 1px, transparent 1px), linear-gradient(90deg, ${C.gold} 1px, transparent 1px);
   background-size: 80px 80px;
+  z-index: 1;
+`
+const Scanline = styled.div`
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, ${C.gold}, transparent);
+  opacity: 0.35; pointer-events: none; z-index: 2;
+  animation: ${scanline} 6s linear infinite;
+`
+const Orb1 = styled.div`
+  position: absolute; top: 15%; right: 10%; width: 450px; height: 450px;
+  background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 75%);
+  filter: blur(80px); pointer-events: none; z-index: 0;
+`
+const Orb2 = styled.div`
+  position: absolute; bottom: 15%; left: 5%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,240,255,0.03) 0%, transparent 75%);
+  filter: blur(80px); pointer-events: none; z-index: 0;
+`
+const Corner = styled.div`
+  position: absolute; width: 16px; height: 16px;
+  border-color: ${C.border}; border-style: solid;
+  pointer-events: none; z-index: 2;
+  &.top-left { top: 3rem; left: 3rem; border-width: 1px 0 0 1px; }
+  &.top-right { top: 3rem; right: 3rem; border-width: 1px 1px 0 0; }
+  &.bottom-left { bottom: 3rem; left: 3rem; border-width: 0 0 1px 1px; }
+  &.bottom-right { bottom: 3rem; right: 3rem; border-width: 0 1px 1px 0; }
 `
 const HeroContent = styled.div`
-  position: relative; z-index: 1; max-width: 800px;
+  position: relative; z-index: 3; max-width: 820px;
   animation: ${fadeUp} 0.9s ease both;
 `
 const HeroEyebrow = styled.div`
@@ -95,7 +154,15 @@ const HeroTitle = styled.h1`
   font-weight: 300; color: ${C.white};
   line-height: 1.05; letter-spacing: -0.01em;
   margin-bottom: 1.5rem;
-  em { font-style: italic; color: ${C.gold}; }
+  em {
+    font-style: normal;
+    display: inline-block;
+    background: linear-gradient(90deg, ${C.gold} 20%, ${C.goldLight} 50%, ${C.gold} 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: ${shimmerText} 3s linear infinite, ${glitch} 5s infinite;
+  }
 `
 const HeroSub = styled.p`
   font-size: 1.05rem; color: ${C.muted}; line-height: 1.8;
@@ -108,6 +175,7 @@ const PrimaryBtn = styled.button`
   border: none; color: ${C.obsidian};
   font-size: 0.8rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
   cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   &:hover { background: ${C.goldLight}; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(212,175,55,0.3); }
 `
 const SecondaryBtn = styled.button`
@@ -115,11 +183,13 @@ const SecondaryBtn = styled.button`
   background: transparent; border: 1px solid rgba(255,255,255,0.2);
   color: ${C.white}; font-size: 0.8rem; font-weight: 500;
   letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   &:hover { border-color: ${C.gold}; color: ${C.gold}; }
 `
 const HeroStats = styled.div`
   position: absolute; bottom: 3rem; right: 5vw;
-  display: flex; gap: 3rem; z-index: 1;
+  display: flex; gap: 3rem; z-index: 3;
+  @media(max-width:768px) { display:none; }
 `
 const Stat = styled.div`
   text-align: right;
@@ -135,8 +205,9 @@ const StatLabel = styled.div`
   color: ${C.muted}; margin-top: 0.3rem;
 `
 const ScrollIndicator = styled.div`
-  position: absolute; bottom: 3rem; left: 5vw; z-index: 1;
+  position: absolute; bottom: 3rem; left: 5vw; z-index: 3;
   display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  @media(max-width:768px) { display:none; }
 `
 const ScrollLine = styled.div`
   width: 1px; height: 60px;
@@ -149,9 +220,9 @@ const ScrollText = styled.span`
 `
 
 // ── MARQUEE ──────────────────────────────────────────────
-const marquee = keyframes`from { transform: translateX(0); } to { transform: translateX(-50%); }`
 const MarqueeSection = styled.div`
   background: ${C.gold}; padding: 1rem 0; overflow: hidden;
+  position: relative; z-index: 10;
 `
 const MarqueeInner = styled.div`
   display: flex; gap: 4rem; width: max-content;
@@ -162,13 +233,62 @@ const MarqueeItem = styled.span`
   color: ${C.obsidian}; font-weight: 600; white-space: nowrap;
 `
 
+// ── ANIMATED STATS STRIP ──────────────────────────────────
+const StatsStrip = styled.div`
+  background: ${C.card};
+  border-top: 1px solid ${C.border};
+  border-bottom: 1px solid ${C.border};
+  padding: 3.5rem 5vw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 5;
+  &::before {
+    content: ''; position: absolute; inset: 0;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    background: linear-gradient(90deg, transparent, ${C.gold}, transparent) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: ${borderPulse} 4s infinite ease-in-out;
+  }
+  @media(max-width:600px) {
+    grid-template-columns: 1fr;
+  }
+`
+const StripStat = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`
+const StripNum = styled.div`
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; font-weight: 400; color: ${C.gold};
+  span { color: ${C.white}; }
+`
+const StripLabel = styled.div`
+  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: ${C.muted};
+  margin-top: 0.5rem;
+`
+
 // ── PROPERTIES SECTION ───────────────────────────────────
 const Section = styled.section`
   background: ${C.ink}; padding: 7rem 5vw;
+  position: relative;
+  z-index: 5;
 `
 const SectionHeader = styled.div`
   display: flex; justify-content: space-between; align-items: flex-end;
   margin-bottom: 4rem;
+  @media(max-width:600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
 `
 const SectionMeta = styled.div``
 const SectionEyebrow = styled.div`
@@ -189,60 +309,92 @@ const SectionLink = styled.button`
   &:hover { gap: 1rem; }
 `
 const PropertiesGrid = styled.div`
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  display: flex; flex-direction: column; gap: 2.5rem;
 `
 const PropertyCard = styled.div`
+  display: flex; background: ${C.card}; border: 1px solid ${C.borderSubtle};
   position: relative; overflow: hidden; cursor: pointer;
-  aspect-ratio: 3/4;
-  background: ${C.card};
-  &:hover img { transform: scale(1.06); }
+  min-height: 280px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  &:hover {
+    border-color: ${C.gold};
+    box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 0 20px rgba(212,175,55,0.05);
+    transform: translateY(-4px);
+  }
+  @media(max-width: 768px) {
+    flex-direction: column;
+  }
+`
+const PropertyImgWrap = styled.div`
+  width: 42%; position: relative; overflow: hidden;
+  @media(max-width: 768px) {
+    width: 100%; height: 220px;
+  }
 `
 const PropertyImg = styled.img`
   width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.6s ease; display: block;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  ${PropertyCard}:hover & { transform: scale(1.05); }
 `
 const PropertyOverlay = styled.div`
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(10,10,11,0.95) 0%, rgba(10,10,11,0.3) 60%, transparent 100%);
+  background: linear-gradient(to right, rgba(10,10,11,0.95) 0%, transparent 100%);
   opacity: 0.7; transition: opacity 0.4s;
-  ${PropertyCard}:hover & {
-    opacity: 1;
+  ${PropertyCard}:hover & { opacity: 0.85; }
+  @media(max-width: 768px) {
+    background: linear-gradient(to top, rgba(10,10,11,0.95) 0%, transparent 100%);
   }
 `
 const PropertyInfo = styled.div`
-  position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem;
+  width: 58%; padding: 3rem; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  z-index: 1;
+  @media(max-width: 768px) {
+    width: 100%; padding: 2rem;
+  }
+`
+const GhostNumber = styled.div`
+  position: absolute; right: 2rem; bottom: -1rem;
+  font-family: 'Cormorant Garamond', serif; font-size: 9rem; font-weight: 700;
+  color: rgba(255,255,255,0.015); pointer-events: none; line-height: 1; z-index: 0;
 `
 const PropertyBadge = styled.span`
-  display: inline-block; padding: 0.25rem 0.8rem; margin-bottom: 0.75rem;
+  align-self: flex-start; padding: 0.25rem 0.8rem; margin-bottom: 1.25rem;
   border: 1px solid ${C.gold}; color: ${C.gold};
-  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  background: rgba(212,175,55,0.05);
 `
 const PropertyTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem; font-weight: 400; color: ${C.white};
-  margin-bottom: 0.3rem; line-height: 1.2;
+  font-size: 1.6rem; font-weight: 400; color: ${C.white};
+  margin-bottom: 0.4rem; line-height: 1.2;
 `
 const PropertyLocation = styled.div`
   font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
 `
 const PropertyPrice = styled.div`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem; color: ${C.gold}; font-weight: 500;
+  font-size: 1.8rem; color: ${C.gold}; font-weight: 500; margin-bottom: 1.25rem;
 `
 const PropertyChips = styled.div`
-  display: flex; gap: 0.5rem; margin-top: 0.5rem;
+  display: flex; gap: 0.5rem; flex-wrap: wrap; z-index: 2;
 `
 const PChip = styled.span`
   font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.12);
-  padding: 0.2rem 0.6rem;
+  color: rgba(255,255,255,0.42); border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.01);
 `
 
 // ── OWNER SECTION ─────────────────────────────────────────
 const OwnerSection = styled.section`
   background: ${C.surface}; padding: 7rem 5vw;
   display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+  position: relative; z-index: 5;
+  @media(max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
 `
 const OwnerImageWrap = styled.div`
   position: relative;
@@ -256,6 +408,7 @@ const OwnerImg = styled.div`
   background: ${C.card};
   position: relative; z-index: 1;
   overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
 `
 const OwnerImgInner = styled.img`
   width: 100%; height: 100%; object-fit: cover;
@@ -263,6 +416,7 @@ const OwnerImgInner = styled.img`
 const OwnerBadge = styled.div`
   position: absolute; bottom: -1.5rem; right: -1.5rem; z-index: 2;
   background: ${C.gold}; padding: 1.5rem 2rem;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 `
 const OwnerBadgeNum = styled.div`
   font-family: 'Cormorant Garamond', serif;
@@ -298,36 +452,69 @@ const OwnerStatLabel = styled.div`
   font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: ${C.muted};
 `
 
-// ── WHY US ───────────────────────────────────────────────
+// ── WHY PROPFLOW (2x2 GRID UPGRADE) ───────────────────────
 const WhySection = styled.section`
   background: ${C.obsidian}; padding: 7rem 5vw;
+  position: relative; z-index: 5;
 `
 const WhyGrid = styled.div`
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 4rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 4rem;
+  @media(max-width:768px) { grid-template-columns: 1fr; }
 `
 const WhyCard = styled.div`
-  padding: 3rem 2rem; background: ${C.ink};
-  border-top: 1px solid ${C.border}; transition: all 0.3s;
-  &:hover { background: ${C.card}; border-top-color: ${C.gold}; }
+  padding: 3.5rem 3rem; background: ${C.card};
+  border: 1px solid ${C.borderSubtle};
+  position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  &::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent 10%, ${C.gold} 50%, transparent 90%);
+    transform: scaleX(0); transition: transform 0.5s ease;
+  }
+  &:hover::before {
+    transform: scaleX(1);
+  }
+  &:hover {
+    border-color: ${C.gold};
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+  }
+`
+const WhyGhostNumber = styled.div`
+  position: absolute; right: 2rem; top: 1.5rem;
+  font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 700;
+  color: rgba(255,255,255,0.015); pointer-events: none; line-height: 1;
+`
+const WhyIconContainer = styled.div`
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; margin-bottom: 2rem;
+  &::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(212,175,55,0.04);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    border: 1px solid ${C.border};
+  }
 `
 const WhyIcon = styled.div`
-  font-size: 2rem; margin-bottom: 1.5rem;
-  animation: ${shimmer} 3s infinite;
+  font-size: 1.5rem; color: ${C.gold}; position: relative; z-index: 1;
 `
 const WhyTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem; font-weight: 400; color: ${C.white}; margin-bottom: 1rem;
+  font-size: 1.4rem; font-weight: 400; color: ${C.white}; margin-bottom: 1rem;
 `
 const WhyDesc = styled.p`
-  font-size: 0.85rem; color: ${C.muted}; line-height: 1.8;
+  font-size: 0.9rem; color: ${C.muted}; line-height: 1.8;
 `
 
 // ── TESTIMONIALS ─────────────────────────────────────────
 const TestiSection = styled.section`
   background: ${C.surface}; padding: 7rem 5vw;
+  position: relative; z-index: 5;
 `
 const TestiGrid = styled.div`
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4rem;
+  @media(max-width:900px) { grid-template-columns: 1fr; gap: 2rem; }
 `
 const TestiCard = styled.div`
   padding: 2.5rem; background: ${C.ink};
@@ -356,17 +543,61 @@ const TestiRole = styled.div`
   font-size: 0.72rem; color: ${C.muted}; letter-spacing: 0.1em;
 `
 
+// ── DUAL CTA SECTION ─────────────────────────────────────
+const DualCTASection = styled.section`
+  background: ${C.ink}; padding: 7rem 5vw;
+  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 5rem; align-items: center;
+  border-top: 1px solid ${C.borderSubtle};
+  position: relative; z-index: 5;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+`
+const CTALeft = styled.div``
+const CTARight = styled.div`
+  background: ${C.surface};
+  border: 1px solid ${C.border};
+  padding: 3rem;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  &::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 40px; height: 1px; background: ${C.gold};
+  }
+  &::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 1px; height: 40px; background: ${C.gold};
+  }
+`
+const CTAPanelTitle = styled.h4`
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 400; color: ${C.white}; margin-bottom: 1rem;
+`
+const CTAPanelSub = styled.p`
+  font-size: 0.88rem; color: ${C.muted}; line-height: 1.6; margin-bottom: 2rem;
+`
+
 // ── FOOTER ───────────────────────────────────────────────
 const Footer = styled.footer`
   background: ${C.obsidian}; padding: 4rem 5vw 2rem;
   border-top: 1px solid ${C.border};
+  position: relative; z-index: 5;
 `
 const FooterTop = styled.div`
   display: flex; justify-content: space-between; align-items: center;
   padding-bottom: 2rem; border-bottom: 1px solid ${C.border}; margin-bottom: 2rem;
+  @media(max-width:600px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
 `
 const FooterBottom = styled.div`
   display: flex; justify-content: space-between; align-items: center;
+  @media(max-width:600px) {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
 `
 const FooterCopy = styled.div`
   font-size: 0.75rem; color: ${C.muted}; letter-spacing: 0.05em;
@@ -380,7 +611,7 @@ const PROPERTIES = [
     location: 'Mumbai, Maharashtra',
     price: '₹12.5 Cr',
     badge: 'For Sale',
-    bhk: 4, area: '4,200',
+    bhk: 4, area: '4,200', level: 'Penthouse Level',
     img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
   },
   {
@@ -389,7 +620,7 @@ const PROPERTIES = [
     location: 'Gurugram, Haryana',
     price: '₹8.9 Cr',
     badge: 'For Sale',
-    bhk: 3, area: '3,100',
+    bhk: 3, area: '3,100', level: 'Level 24',
     img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
   },
   {
@@ -398,7 +629,7 @@ const PROPERTIES = [
     location: 'Hyderabad, Telangana',
     price: '₹3.2L/mo',
     badge: 'For Rent',
-    bhk: 5, area: '5,800',
+    bhk: 5, area: '5,800', level: 'Estate Level',
     img: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=600&q=80',
   },
 ]
@@ -414,6 +645,15 @@ const TESTIMONIALS = [
 export default function Landing() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // If logged in → go to dashboard; else → go to login
   const goProtected = (path = '/properties') => {
@@ -428,9 +668,7 @@ export default function Landing() {
 
   return (
     <>
-
-
-      <Nav>
+      <Nav $scrolled={scrolled}>
         <Logo onClick={() => navigate(user ? '/properties' : '/')} style={{ cursor: 'pointer' }}>Prop<span>Flow</span></Logo>
         <NavLinks>
           <NavLink onClick={() => goProtected('/properties')}>Properties</NavLink>
@@ -447,10 +685,20 @@ export default function Landing() {
       <HeroSection>
         <HeroBg />
         <HeroGrid />
+        <Scanline />
+        <Orb1 />
+        <Orb2 />
+        <Corner className="top-left" />
+        <Corner className="top-right" />
+        <Corner className="bottom-left" />
+        <Corner className="bottom-right" />
+
         <HeroContent>
           <HeroEyebrow>
             <EyebrowLine />
-            <EyebrowText>India's Premier Property Platform</EyebrowText>
+            <HeroEyebrow>
+              <EyebrowText>India's Premier Property Platform</EyebrowText>
+            </HeroEyebrow>
           </HeroEyebrow>
           <HeroTitle>
             Where <em>Exceptional</em><br />Homes Find<br />Discerning Owners
@@ -483,7 +731,7 @@ export default function Landing() {
         </MarqueeInner>
       </MarqueeSection>
 
-      {/* FEATURED PROPERTIES */}
+      {/* FEATURED PROPERTIES (HORIZONTAL ROW UPGRADE) */}
       <Section>
         <SectionHeader>
           <SectionMeta>
@@ -495,11 +743,14 @@ export default function Landing() {
           </SectionLink>
         </SectionHeader>
         <PropertiesGrid>
-          {PROPERTIES.map(p => (
+          {PROPERTIES.map((p, index) => (
             <PropertyCard key={p._id} onClick={() => goProtected(`/properties/${p._id}`)}>
-              <PropertyImg src={p.img} alt={p.title} loading="lazy" />
-              <PropertyOverlay className="overlay" />
+              <PropertyImgWrap>
+                <PropertyImg src={p.img} alt={p.title} loading="lazy" />
+                <PropertyOverlay />
+              </PropertyImgWrap>
               <PropertyInfo>
+                <GhostNumber>0{index + 1}</GhostNumber>
                 <PropertyBadge>{p.badge}</PropertyBadge>
                 <PropertyTitle>{p.title}</PropertyTitle>
                 <PropertyLocation>◆ {p.location}</PropertyLocation>
@@ -507,12 +758,29 @@ export default function Landing() {
                 <PropertyChips>
                   <PChip>{p.bhk} BHK</PChip>
                   <PChip>{p.area} sq.ft</PChip>
+                  <PChip>{p.level}</PChip>
                 </PropertyChips>
               </PropertyInfo>
             </PropertyCard>
           ))}
         </PropertiesGrid>
       </Section>
+
+      {/* ANIMATED STATS STRIP */}
+      <StatsStrip>
+        <StripStat>
+          <StripNum>2,400<span>+</span></StripNum>
+          <StripLabel>Luxury Properties</StripLabel>
+        </StripStat>
+        <StripStat>
+          <StripNum>100<span>%</span></StripNum>
+          <StripLabel>Direct Owner Listings</StripLabel>
+        </StripStat>
+        <StripStat>
+          <StripNum>0<span>%</span></StripNum>
+          <StripLabel>Brokerage Charged</StripLabel>
+        </StripStat>
+      </StatsStrip>
 
       {/* OWNER SPOTLIGHT */}
       <OwnerSection>
@@ -555,7 +823,7 @@ export default function Landing() {
         </OwnerContent>
       </OwnerSection>
 
-      {/* WHY PROPFLOW */}
+      {/* WHY PROPFLOW (2x2 GRID UPGRADE) */}
       <WhySection id="about">
         <SectionHeader>
           <SectionMeta>
@@ -565,13 +833,16 @@ export default function Landing() {
         </SectionHeader>
         <WhyGrid>
           {[
-            { icon: '◈', title: 'Verified Listings Only', desc: 'Every property undergoes a rigorous 12-point authentication before appearing on our platform.' },
-            { icon: '◇', title: 'Zero Brokerage', desc: 'Connect directly with verified owners. No middlemen, no hidden fees, no surprises.' },
-            { icon: '◆', title: 'White-Glove Support', desc: 'A dedicated concierge team available for every inquiry, site visit, and transaction.' },
-            { icon: '◉', title: 'Discreet Transactions', desc: 'Your privacy is paramount. Every transaction handled with absolute confidentiality.' },
+            { icon: '◈', title: 'Verified Listings Only', desc: 'Every property undergoes a rigorous 12-point authentication before appearing on our platform.', num: '01' },
+            { icon: '◇', title: 'Zero Brokerage', desc: 'Connect directly with verified owners. No middlemen, no hidden fees, no surprises.', num: '02' },
+            { icon: '◆', title: 'White-Glove Support', desc: 'A dedicated concierge team available for every inquiry, site visit, and transaction.', num: '03' },
+            { icon: '◉', title: 'Discreet Transactions', desc: 'Your privacy is paramount. Every transaction handled with absolute confidentiality.', num: '04' },
           ].map((item, i) => (
             <WhyCard key={i}>
-              <WhyIcon>{item.icon}</WhyIcon>
+              <WhyGhostNumber>{item.num}</WhyGhostNumber>
+              <WhyIconContainer>
+                <WhyIcon>{item.icon}</WhyIcon>
+              </WhyIconContainer>
               <WhyTitle>{item.title}</WhyTitle>
               <WhyDesc>{item.desc}</WhyDesc>
             </WhyCard>
@@ -604,14 +875,32 @@ export default function Landing() {
         </TestiGrid>
       </TestiSection>
 
+      {/* DUAL CTA SECTION */}
+      <DualCTASection id="contact">
+        <CTALeft>
+          <SectionEyebrow>Ready to Begin?</SectionEyebrow>
+          <SectionTitle style={{ marginBottom: '1.5rem' }}>Experience the<br />Future of <em>Luxury Real Estate</em></SectionTitle>
+          <p style={{ color: C.muted, lineHeight: '1.8', maxWidth: '520px', marginBottom: '2.5rem' }}>
+            Whether looking to acquire a signature sky residence or present a high-value asset, our platform guarantees an efficient, broker-free process with absolute privacy.
+          </p>
+          <PrimaryBtn onClick={() => goProtected('/properties')}>Browse Inventory</PrimaryBtn>
+        </CTALeft>
+        <CTARight>
+          <CTAPanelTitle>Direct Inquiries</CTAPanelTitle>
+          <CTAPanelSub>Our white-glove concierge is available 24/7. Speak directly with us for bespoke needs or private walkthroughs.</CTAPanelSub>
+          <a href="mailto:contact@propflow.com" style={{ textDecoration: 'none' }}>
+            <PrimaryBtn style={{ width: '100%', textAlign: 'center' }}>Send Message</PrimaryBtn>
+          </a>
+        </CTARight>
+      </DualCTASection>
+
       {/* FOOTER */}
-      <Footer id="contact">
+      <Footer>
         <FooterTop>
           <Logo style={{ fontSize: '1.4rem' }} onClick={goToDashboard}>Prop<span>Flow</span></Logo>
           <NavLinks>
             <NavLink onClick={() => goProtected('/properties')}>Properties</NavLink>
             <NavLink onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}>About</NavLink>
-            <NavLink onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Contact</NavLink>
             <NavLink href="mailto:contact@propflow.com">Contact Us</NavLink>
           </NavLinks>
         </FooterTop>
