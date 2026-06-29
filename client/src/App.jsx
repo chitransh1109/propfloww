@@ -75,15 +75,15 @@ function App() {
                   </Layout>
                 }
               />
-              <Route
-                path="/admin"
-                element={
-                  <Layout>
-                    <AdminDashboard />
-                  </Layout>
-                }
-              />
             </Route>
+            <Route
+              path="/admin"
+              element={
+                <Layout>
+                  <AdminDashboard />
+                </Layout>
+              }
+            />
           </Routes>
         </Suspense>
       </Router>
