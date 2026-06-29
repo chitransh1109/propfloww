@@ -132,12 +132,20 @@ const Row = styled.div`
   padding:1rem 0; border-bottom:1px solid ${C.borderSubtle};
   &:last-child { border-bottom:none; padding-bottom:0; }
   &:first-child { padding-top:0; }
+  @media (max-width: 500px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 `
 const RowLabel = styled.div`
   font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:${C.muted};
 `
 const RowValue = styled.div`
   font-size:0.9rem; color:${C.white}; font-weight:400; text-align:right;
+  @media (max-width: 500px) {
+    text-align: left;
+  }
 `
 const RoleBadge = styled.span`
   padding:0.25rem 0.85rem; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;

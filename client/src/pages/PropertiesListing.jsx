@@ -26,6 +26,11 @@ const ActionsRow = styled.div`
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    width: 100%;
+    & > * { flex: 1; }
+  }
 `
 
 const FilterToggleBtn = styled.button`
@@ -56,6 +61,8 @@ const FilterDropdown = styled.div`
   right: 0;
   z-index: 150;
   width: 380px;
+  max-width: 100vw;
+  box-sizing: border-box;
   background: rgba(13, 13, 16, 0.85);
   border: 1px solid rgba(212, 175, 55, 0.15);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -67,6 +74,12 @@ const FilterDropdown = styled.div`
   gap: 1.5rem;
   margin-top: 0.5rem;
   animation: dropdownScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @media (max-width: 480px) {
+    width: calc(100vw - 2rem);
+    right: auto;
+    left: 0;
+  }
 
   @keyframes dropdownScale {
     from { opacity: 0; transform: translateY(-10px) scale(0.98); }
@@ -258,6 +271,13 @@ const SortDropdownList = styled.div`
   z-index: 160;
   min-width: 200px;
   background: rgba(13, 13, 16, 0.9);
+
+  @media (max-width: 480px) {
+    right: auto;
+    left: 0;
+    width: 100%;
+    min-width: unset;
+  }
   border: 1px solid rgba(212, 175, 55, 0.15);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(25px);
@@ -290,6 +310,11 @@ const SortOption = styled.button`
 const TopBar = styled.div`
   display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;
   padding-bottom: 1.5rem; border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
 `
 
 const ResultMeta = styled.div``

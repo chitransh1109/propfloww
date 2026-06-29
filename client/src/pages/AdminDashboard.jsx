@@ -70,6 +70,8 @@ const StatDecorator = styled.div`
 const TabRow = styled.div`
   display: flex; gap: 1rem; border-bottom: 1px solid ${C.borderSubtle};
   margin-bottom: 2rem; padding-bottom: 0.5rem;
+  overflow-x: auto;
+  &::-webkit-scrollbar { display: none; }
 `
 const Tab = styled.button`
   background: transparent; border: none; cursor: pointer;
@@ -77,6 +79,7 @@ const Tab = styled.button`
   font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em;
   text-transform: uppercase; padding: 0.75rem 1.5rem;
   transition: all 0.3s; position: relative;
+  white-space: nowrap;
   &::after {
     content: ''; position: absolute; bottom: -0.6rem; left: 0; right: 0; height: 2px;
     background: ${C.gold}; transform: scaleX(${p => p.active ? 1 : 0});
@@ -89,6 +92,9 @@ const MainCard = styled.div`
   background: ${C.card}; border: 1px solid ${C.border};
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   padding: 2.5rem;
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
 `
 
 const ErrorMsg = styled.div`
@@ -104,6 +110,10 @@ const SuccessMsg = styled.div`
 
 const Table = styled.table`
   width: 100%; border-collapse: collapse; text-align: left;
+  @media (max-width: 768px) {
+    display: block;
+    overflow-x: auto;
+  }
 `
 const Th = styled.th`
   padding: 1rem; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;

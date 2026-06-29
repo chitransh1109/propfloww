@@ -221,12 +221,29 @@ const BackBtn = styled.button`
   &:hover::after { width: 100%; }
 `
 
-const Layout = styled.div`display:grid; grid-template-columns:1fr 380px; gap:2.5rem; align-items:start;`
+const Layout = styled.div`
+  display:grid; grid-template-columns:1fr 380px; gap:2.5rem; align-items:start;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+`
 const Left = styled.div``
-const Right = styled.div`position:sticky; top:2rem;`
+const Right = styled.div`
+  position:sticky; top:2rem;
+  @media (max-width: 900px) {
+    position: static;
+  }
+`
 
 /* ── GALLERY ── */
-const Gallery = styled.div`display:grid; grid-template-columns:1fr 100px; gap:3px; margin-bottom:2rem;`
+const Gallery = styled.div`
+  display:grid; grid-template-columns:1fr 100px; gap:3px; margin-bottom:2rem;
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+`
 const MainImg = styled.div`
   height:460px; overflow:hidden; position:relative; background:${C.card};
   display:flex; align-items:center; justify-content:center; font-size:5rem;
@@ -235,8 +252,17 @@ const MainImg = styled.div`
   transition: border-color 0.3s;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover { border-color: ${C.gold}; }
+  @media (max-width: 600px) {
+    height: 260px;
+  }
 `
-const Thumbs = styled.div`display:flex; flex-direction:column; gap:3px;`
+const Thumbs = styled.div`
+  display:flex; flex-direction:column; gap:3px;
+  @media (max-width: 600px) {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+`
 const Thumb = styled.div`
   height:152px; cursor:pointer; overflow:hidden;
   background:${p => p.src ? `url(${p.src}) center/cover` : C.surface};
@@ -245,6 +271,13 @@ const Thumb = styled.div`
   border-left:2px solid ${p => p.active ? C.gold : 'transparent'};
   clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   &:hover { opacity:1; }
+  @media (max-width: 600px) {
+    height: 70px;
+    flex: 1;
+    min-width: 80px;
+    border-left: none;
+    border-bottom: 2px solid ${p => p.active ? C.gold : 'transparent'};
+  }
 `
 
 /* ── INFO CARD ── */

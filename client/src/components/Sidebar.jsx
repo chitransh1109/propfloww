@@ -26,6 +26,16 @@ const LogoSub = styled.div`
   color:${C.muted}; margin-top:0.3rem; font-family:'Inter',sans-serif;
   opacity: 0.8;
 `
+
+const MobileCloseBtn = styled.button`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; top: 1.5rem; right: 1rem;
+    background: transparent; border: none; color: ${C.gold};
+    font-size: 1.4rem; cursor: pointer; padding: 0.5rem;
+  }
+`
 const NavList = styled.nav`
   flex:1; padding:2rem 1rem; display:flex; flex-direction:column; gap:6px;
 `
@@ -94,7 +104,7 @@ const LogoutBtn = styled.button`
   &:hover { border-color:#e05252; color:#e05252; }
 `
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
@@ -102,6 +112,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     logout()
     navigate('/')
+    if (onClose) onClose()
   }
 
   const navLinks = [
@@ -111,8 +122,9 @@ const Sidebar = () => {
   ]
 
   return (
-    <SidebarWrapper>
-      <Logo onClick={() => navigate('/properties')} style={{ cursor: 'pointer' }}>
+    <SidebarWrapper style={{ position: 'relative' }}>
+      <MobileCloseBtn onClick={onClose}>✖</MobileCloseBtn>
+      <Logo onClick={() => { navigate('/properties'); if (onClose) onClose(); }} style={{ cursor: 'pointer' }}>
         Prop<span>Flow</span>
         <LogoSub>Private Residences</LogoSub>
       </Logo>
@@ -123,7 +135,10 @@ const Sidebar = () => {
           <NavItem
             key={link.path}
             $active={location.pathname === link.path}
-            onClick={() => navigate(link.path)}
+            onClick={() => {
+              navigate(link.path)
+              if (onClose) onClose()
+            }}
           >
             <NavIcon>{link.icon}</NavIcon>
             {link.label}

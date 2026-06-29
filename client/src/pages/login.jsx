@@ -64,6 +64,9 @@ const Left = styled.div`
     min-height: 320px;
     padding: 3rem 2rem 4rem 2rem;
   }
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 const LeftBg = styled.div`
   position: absolute; inset: 0;
@@ -132,6 +135,23 @@ const Right = styled.div`
     border-left: none;
     border-top: 1px solid ${C.border};
     padding: 3rem 2rem;
+  }
+  @media (max-width: 768px) {
+    min-height: 100vh;
+    justify-content: center;
+    border-top: none;
+  }
+`
+
+const MobileHeaderLogo = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 600; color: ${C.white};
+    letter-spacing: 0.04em; text-align: center; margin-bottom: 2rem;
+    cursor: pointer;
+    span { color: ${C.gold}; }
   }
 `
 const RightBg = styled.div`
@@ -465,6 +485,9 @@ function Login() {
           <Corner className="bottom-right" />
           
           <FormWrap key={mode}>
+            <MobileHeaderLogo onClick={() => navigate('/')}>
+              Prop<span>Flow</span>
+            </MobileHeaderLogo>
             <FormEyebrow>PropFlow Members</FormEyebrow>
             <FormTitle>
               {mode === 'login' ? 'Welcome Back' : mode === 'register' ? 'Begin Here' : 'Reset Password'}

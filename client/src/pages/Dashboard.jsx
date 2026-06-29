@@ -370,7 +370,12 @@ const ModalTitle = styled.h2`
   color:${C.white}; margin-bottom:0.25rem;
 `
 const ModalSub = styled.p`color:${C.muted}; font-size:0.82rem; margin-bottom:2rem;`
-const FormGrid = styled.div`display:grid; grid-template-columns:1fr 1fr; gap:1rem;`
+const FormGrid = styled.div`
+  display:grid; grid-template-columns:1fr 1fr; gap:1rem;
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+`
 const FormGroup = styled.div`margin-bottom:1rem; ${p => p.full ? 'grid-column:1/-1;' : ''}`
 const Label = styled.label`
   display:block; font-size:0.65rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
