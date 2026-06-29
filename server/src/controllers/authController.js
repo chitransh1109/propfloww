@@ -5,10 +5,16 @@ const nodemailer = require('nodemailer')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 8000,
+  greetingTimeout: 8000,
+  socketTimeout: 8000,
 })
 
 const register = async (req, res) => {
@@ -127,6 +133,11 @@ const switchRole = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error('EMAIL_USER or EMAIL_PASS is not configured in backend environment variables.')
+      return res.status(500).json({ message: 'Mail server credentials are not configured on the backend. Please set EMAIL_USER and EMAIL_PASS.' })
+    }
+
     const email = req.body.email?.toLowerCase().trim()
     const user = await User.findOne({ email })
     if (!user) {
