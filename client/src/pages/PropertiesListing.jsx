@@ -334,12 +334,8 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
   gap: 1.5rem;
   @media (max-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  @media (max-width: 400px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 `
 
@@ -359,7 +355,7 @@ const Card = styled.div`
 const CardImgWrap = styled.div`
   height: 220px; overflow: hidden; position: relative;
   @media (max-width: 768px) {
-    height: 130px;
+    height: 200px;
   }
 `
 
@@ -401,7 +397,7 @@ const HeartBtn = styled.button`
 const CardBody = styled.div`
   padding: 1.5rem;
   @media (max-width: 768px) {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 `
 
@@ -409,8 +405,8 @@ const CardTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400;
   color: ${C.white}; margin-bottom: 0.35rem; line-height: 1.2;
   @media (max-width: 768px) {
-    font-size: 0.88rem;
-    margin-bottom: 0.25rem;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
   }
 `
 
@@ -418,16 +414,15 @@ const CardLocation = styled.div`
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: ${C.muted}; margin-bottom: 1.2rem;
   @media (max-width: 768px) {
-    font-size: 0.58rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.05em;
+    font-size: 0.65rem;
+    margin-bottom: 0.75rem;
   }
 `
 
 const ChipRow = styled.div`
   display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.2rem;
   @media (max-width: 768px) {
-    display: none;
+    margin-bottom: 0.75rem;
   }
 `
 
@@ -444,7 +439,7 @@ const CardFooter = styled.div`
 const Price = styled.div`
   font-family: 'Cormorant Garamond', serif; color: ${C.gold}; font-weight: 500; font-size: 1.35rem;
   @media (max-width: 768px) {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
   }
 `
 
@@ -455,7 +450,8 @@ const ViewBtn = styled.button`
   cursor: pointer; transition: all 0.25s;
   &:hover { background: ${C.gold}; color: ${C.obsidian}; }
   @media (max-width: 768px) {
-    display: none;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.6rem;
   }
 `
 

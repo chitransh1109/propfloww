@@ -141,8 +141,8 @@ const Tab = styled.button`
 const Grid = styled.div`
   display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem;
   @media (max-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 `
 const Card = styled.div`
@@ -157,7 +157,7 @@ const CardImg = styled.div`
   transition:transform 0.4s; position:relative;
   ${Card}:hover & { transform:scale(1.02); }
   @media (max-width: 768px) {
-    height: 110px;
+    height: 180px;
   }
 `
 const CardBadge = styled.span`
@@ -168,20 +168,20 @@ const CardBadge = styled.span`
 `
 const CardBody = styled.div`
   padding:1.2rem 1.5rem;
-  @media (max-width: 768px) { padding: 0.65rem; }
+  @media (max-width: 768px) { padding: 1rem; }
 `
 const CardTitle = styled.h3`
   font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400;
   color:${C.white}; margin: 0 0 0.3rem;
-  @media (max-width: 768px) { font-size: 0.85rem; margin-bottom: 0.15rem; }
+  @media (max-width: 768px) { font-size: 1rem; }
 `
 const CardLocation = styled.div`
   font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:${C.muted};
-  @media (max-width: 768px) { font-size: 0.56rem; }
+  @media (max-width: 768px) { font-size: 0.65rem; }
 `
 const CardPrice = styled.div`
   font-family:'Cormorant Garamond',serif; color:${C.gold}; font-size:1.25rem; margin-top: 0.5rem;
-  @media (max-width: 768px) { font-size: 0.9rem; margin-top: 0.3rem; }
+  @media (max-width: 768px) { font-size: 1.1rem; }
 `
 const CardFooter = styled.div`
   display:flex; justify-content:space-between; align-items:center;
