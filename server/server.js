@@ -24,6 +24,7 @@ app.use('/api/auth', require('./src/routes/authRoutes'))
 app.use('/api/properties', require('./src/routes/propertyRoutes'))
 // app.use('/api/leads', require('./src/routes/leadRoutes')) // removed lead routes
 app.use('/api/upload', require('./src/routes/UploadRoutes'))
+app.use('/api/admin', require('./src/routes/adminRoutes'))
 
 app.use(notFound)
 app.use(errorHandler)

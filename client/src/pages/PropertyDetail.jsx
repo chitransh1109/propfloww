@@ -409,11 +409,11 @@ const OwnerAvatar = styled.div`
   width:48px; height:48px;
   background:${C.gold}; display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:${C.obsidian}; flex-shrink:0;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border-radius: 50%;
 `
 const OwnerAvatarImg = styled.img`
   width:48px; height:48px; object-fit: cover; flex-shrink:0;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border-radius: 50%;
 `
 const OwnerName = styled.div`color:${C.white}; font-size:0.9rem; font-weight:500;`
 const OwnerRole = styled.div`color:${C.muted}; font-size:0.72rem; letter-spacing:0.08em;`

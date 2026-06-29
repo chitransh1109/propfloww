@@ -12,6 +12,7 @@ const PropertiesListing = lazy(() => import('./pages/PropertiesListing'))
 const PropertyDetail = lazy(() => import('./pages/PropertyDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Settings = lazy(() => import('./pages/settings'))
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 
 // ── Themed loading fallback ──
 const PageLoader = () => (
@@ -71,6 +72,14 @@ function App() {
                 element={
                   <Layout>
                     <Settings />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <Layout>
+                    <AdminDashboard />
                   </Layout>
                 }
               />

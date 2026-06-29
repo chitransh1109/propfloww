@@ -68,7 +68,7 @@ const AvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border-radius: 50%;
 `
 const AvatarOverlay = styled.div`
   position: absolute;
@@ -84,7 +84,7 @@ const AvatarOverlay = styled.div`
   color: ${C.gold};
   opacity: 0;
   transition: opacity 0.25s;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border-radius: 50%;
   text-align: center;
   padding: 4px;
   box-sizing: border-box;
@@ -95,7 +95,7 @@ const Avatar = styled.div`
   display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:2rem; color:${C.obsidian};
   flex-shrink:0;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border-radius: 50%;
 `
 const AvatarInfo = styled.div``
 const AvatarName = styled.div`

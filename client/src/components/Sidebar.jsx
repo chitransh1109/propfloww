@@ -103,6 +103,9 @@ const Sidebar = () => {
     { label: 'My Dashboard', path: '/dashboard', icon: '◈' },
     { label: 'Settings', path: '/settings', icon: '◉' },
   ]
+  if (user && user.role === 'admin') {
+    navLinks.push({ label: 'Platform Admin', path: '/admin', icon: '✦' })
+  }
 
   return (
     <SidebarWrapper>
