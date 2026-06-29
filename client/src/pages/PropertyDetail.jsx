@@ -442,16 +442,29 @@ function PropertyDetail() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    API.get(`/properties/${id}`)
-      .then(res => setProperty(res.data))
-      .catch(() => {
-        const bogus = BOGUS_PROPERTIES[id]
-        if (bogus) setProperty(bogus)
-        else navigate('/properties')
-      })
+    if (id && id.startsWith('demo_')) {
+      const bogus = BOGUS_PROPERTIES[id]
+      if (bogus) {
+        setProperty(bogus)
+      } else {
+        navigate('/properties')
+      }
+    } else {
+      API.get(`/properties/${id}`)
+        .then(res => setProperty(res.data))
+        .catch(() => {
+          navigate('/properties')
+        })
+    }
+
     if (user) {
       API.get('/auth/profile').then(res => {
-        setSaved((res.data.savedProperties?.map(p => p._id || p) || []).includes(id))
+        const savedList = res.data.savedProperties || []
+        setSaved(savedList.some(p => {
+          if (!p) return false
+          const pId = p._id || p
+          return pId.toString() === id.toString()
+        }))
       }).catch(() => {})
     }
   }, [id])
