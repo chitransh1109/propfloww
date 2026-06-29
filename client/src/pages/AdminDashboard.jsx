@@ -188,10 +188,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('stats')
 
-  const [adminSession, setAdminSession] = useState(() => {
-    const stored = sessionStorage.getItem('adminUser')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [adminSession, setAdminSession] = useState(null)
+  const [adminToken, setAdminToken] = useState('')
 
   const [stats, setStats] = useState(null)
   const [users, setUsers] = useState([])
@@ -206,8 +204,7 @@ export default function AdminDashboard() {
   const [loggingIn, setLoggingIn] = useState(false)
 
   const getHeaders = () => {
-    const token = sessionStorage.getItem('adminToken')
-    return { headers: { Authorization: `Bearer ${token}` } }
+    return { headers: { Authorization: `Bearer ${adminToken}` } }
   }
 
   const handleAdminLogin = async () => {
@@ -230,8 +227,7 @@ export default function AdminDashboard() {
         return
       }
 
-      sessionStorage.setItem('adminToken', data.token)
-      sessionStorage.setItem('adminUser', JSON.stringify(data))
+      setAdminToken(data.token)
       setAdminSession(data)
     } catch (err) {
       setLoginError(err.response?.data?.message || 'Invalid email or password.')
