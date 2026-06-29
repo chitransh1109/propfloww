@@ -197,40 +197,38 @@ export default function AdminDashboard() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const [isVerified, setIsVerified] = useState(false)
-  const [verifyPassword, setVerifyPassword] = useState('')
-  const [verifyError, setVerifyError] = useState('')
-  const [verifying, setVerifying] = useState(false)
+  const [adminEmail, setAdminEmail] = useState('')
+  const [adminPassword, setAdminPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
 
-  const handleVerify = async () => {
-    if (!verifyPassword) {
-      setVerifyError('Please enter your password.')
+  const handleAdminLogin = async () => {
+    if (!adminEmail || !adminPassword) {
+      setLoginError('Please enter both email and password.')
       return
     }
-    setVerifying(true)
-    setVerifyError('')
+    setLoggingIn(true)
+    setLoginError('')
 
     try {
-      await API.post('/auth/login', {
-        email: user.email,
-        password: verifyPassword
+      const { data } = await API.post('/auth/login', {
+        email: adminEmail,
+        password: adminPassword
       })
-      setIsVerified(true)
+
+      if (data.role !== 'admin') {
+        setLoginError('Access denied. Administrator privileges required.')
+        setLoggingIn(false)
+        return
+      }
+
+      login(data)
     } catch (err) {
-      setVerifyError(err.response?.data?.message || 'Verification failed. Invalid password.')
+      setLoginError(err.response?.data?.message || 'Invalid email or password.')
     } finally {
-      setVerifying(false)
+      setLoggingIn(false)
     }
   }
-
-  // Verify Admin Access
-  useEffect(() => {
-    if (!user) {
-      navigate('/login', { state: { from: '/admin', error: 'Admin access required. Please sign in.' } })
-    } else if (user.role !== 'admin') {
-      navigate('/login', { state: { from: '/admin', error: 'Access denied. Administrator privileges required.' } })
-    }
-  }, [user, navigate])
 
   const fetchStats = async () => {
     try {
@@ -313,27 +311,39 @@ export default function AdminDashboard() {
     return `₹${p.toLocaleString()}`
   }
 
-  if (!user || user.role !== 'admin') {
-    return null
-  }
+  const isAdmin = user && user.role === 'admin'
 
-  if (!isVerified) {
+  if (!isAdmin) {
     return (
-      <ReAuthWrapper>
+      <ReAuthWrapper style={{ minHeight: '80vh' }}>
         <ReAuthCard>
-          <ReAuthTitle>Admin Verification</ReAuthTitle>
-          <ReAuthSub>Please verify your administrator password to unlock platform control.</ReAuthSub>
-          {verifyError && <ErrorMsg>{verifyError}</ErrorMsg>}
-          <ReAuthInput 
-            type="password" 
-            placeholder="Verify Password" 
-            value={verifyPassword} 
-            $hasError={!!verifyError}
-            onChange={e => setVerifyPassword(e.target.value)} 
-            onKeyDown={e => e.key === 'Enter' && handleVerify()}
-          />
-          <SubmitBtn onClick={handleVerify} disabled={verifying}>
-            {verifying ? 'Verifying…' : 'Unlock Dashboard'}
+          <ReAuthTitle style={{ fontSize: '2rem' }}>Admin Portal</ReAuthTitle>
+          <ReAuthSub>Please authenticate with your administrator credentials.</ReAuthSub>
+          {loginError && <ErrorMsg>{loginError}</ErrorMsg>}
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, marginBottom: '0.5rem' }}>Email Address</label>
+            <ReAuthInput 
+              type="email" 
+              placeholder="admin@propflow.com" 
+              value={adminEmail} 
+              $hasError={!!loginError}
+              onChange={e => setAdminEmail(e.target.value)} 
+              onKeyDown={e => e.key === 'Enter' && handleAdminLogin()}
+            />
+          </div>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, marginBottom: '0.5rem' }}>Password</label>
+            <ReAuthInput 
+              type="password" 
+              placeholder="••••••••" 
+              value={adminPassword} 
+              $hasError={!!loginError}
+              onChange={e => setAdminPassword(e.target.value)} 
+              onKeyDown={e => e.key === 'Enter' && handleAdminLogin()}
+            />
+          </div>
+          <SubmitBtn onClick={handleAdminLogin} disabled={loggingIn}>
+            {loggingIn ? 'Authenticating…' : 'Access Admin Panel'}
           </SubmitBtn>
         </ReAuthCard>
       </ReAuthWrapper>
