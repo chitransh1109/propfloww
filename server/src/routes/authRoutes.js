@@ -10,6 +10,7 @@ const {
   forgotPassword,
   resetPassword,
   updateProfileImage,
+  deleteAccount,
 } = require('../controllers/authController')
 
 const { protect } = require('../middleware/authMiddleware')
@@ -18,6 +19,7 @@ router.post('/register', register)
 router.post('/login', login)
 router.get('/profile', protect, getProfile)
 router.put('/profile-image', protect, updateProfileImage)
+router.delete('/delete-account', protect, deleteAccount)
 
 // password resets
 router.post('/forgot-password', forgotPassword)

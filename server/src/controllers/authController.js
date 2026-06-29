@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Property = require('../models/property')
 const generateToken = require('../utils/generateToken')
 const jwt = require('jsonwebtoken')
 const https = require('https')
@@ -258,6 +259,43 @@ const updateProfileImage = async (req, res) => {
   }
 }
 
+const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id
+    
+    // Find all properties owned by user
+    const properties = await Property.find({ owner: userId })
+    
+    // Safely delete uploaded images from filesystem
+    const fs = require('fs')
+    const path = require('path')
+    
+    properties.forEach(p => {
+      if (p.images && Array.isArray(p.images)) {
+        p.images.forEach(img => {
+          if (img.startsWith('/uploads/')) {
+            const fullPath = path.join(__dirname, '../../', img)
+            fs.unlink(fullPath, () => {})
+          }
+        })
+      }
+    })
+
+    const user = await User.findById(userId)
+    if (user && user.profileImage && user.profileImage.startsWith('/uploads/')) {
+      const fullPath = path.join(__dirname, '../../', user.profileImage)
+      fs.unlink(fullPath, () => {})
+    }
+
+    await Property.deleteMany({ owner: userId })
+    await User.findByIdAndDelete(userId)
+
+    res.json({ message: 'Your account and all associated properties and images have been permanently deleted.' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
 module.exports = {
   register,
   login,
@@ -267,4 +305,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   updateProfileImage,
+  deleteAccount,
 }

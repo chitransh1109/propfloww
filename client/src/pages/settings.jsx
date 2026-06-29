@@ -164,6 +164,15 @@ const LogoutBtn = styled.button`
   &:hover { background:rgba(224,82,82,0.08); border-color:#e05252; color:#e05252; }
 `
 
+const DeleteAccountBtn = styled.button`
+  width:100%; padding:1rem; background:rgba(224,82,82,0.04);
+  border:1px solid #e05252; color:#e05252;
+  font-size:0.75rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.3s; margin-top:1rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  &:hover { background:rgba(224,82,82,0.12); box-shadow: 0 0 20px rgba(224,82,82,0.2); }
+`
+
 const Settings = () => {
   const { logout, login, updateProfileImage } = useAuth()
   const navigate = useNavigate()
@@ -217,6 +226,19 @@ const Settings = () => {
   }, [])
 
   const handleLogout = () => { logout(); navigate('/') }
+
+  const handleDeleteAccount = async () => {
+    const confirmation = window.confirm('WARNING: Are you absolutely sure you want to permanently delete your account? All your settings, listings, and uploaded images will be permanently erased. This action cannot be undone.')
+    if (!confirmation) return
+
+    try {
+      await axiosInstance.delete('/auth/delete-account')
+      logout()
+      navigate('/')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete account. Please try again.')
+    }
+  }
 
   const handleSwitchRole = async () => {
     setSwitching(true)
@@ -336,6 +358,7 @@ const Settings = () => {
       </Card>
 
       <LogoutBtn onClick={handleLogout}>Sign Out of PropFlow</LogoutBtn>
+      <DeleteAccountBtn onClick={handleDeleteAccount}>Delete My Account</DeleteAccountBtn>
     </Page>
   )
 }
