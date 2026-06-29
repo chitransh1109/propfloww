@@ -1,19 +1,53 @@
 const User = require('../models/user')
 const generateToken = require('../utils/generateToken')
 const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
+const https = require('https')
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  family: 4,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 8000,
-  greetingTimeout: 8000,
-  socketTimeout: 8000,
-})
+const sendResendEmail = (options) => {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify({
+      from: 'PropFlow Concierge <onboarding@resend.dev>',
+      to: [options.to],
+      subject: options.subject,
+      html: options.html,
+    })
+
+    const reqOptions = {
+      hostname: 'api.resend.com',
+      port: 443,
+      path: '/emails',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Length': Buffer.byteLength(data),
+      },
+    }
+
+    const req = https.request(reqOptions, (res) => {
+      let body = ''
+      res.on('data', (chunk) => { body += chunk })
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(body))
+          } catch (e) {
+            resolve(body)
+          }
+        } else {
+          reject(new Error(`Resend API error: ${res.statusCode} - ${body}`))
+        }
+      })
+    })
+
+    req.on('error', (err) => {
+      reject(err)
+    })
+
+    req.write(data)
+    req.end()
+  })
+}
 
 const register = async (req, res) => {
   try {
@@ -131,9 +165,9 @@ const switchRole = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.error('EMAIL_USER or EMAIL_PASS is not configured in backend environment variables.')
-      return res.status(500).json({ message: 'Mail server credentials are not configured on the backend. Please set EMAIL_USER and EMAIL_PASS.' })
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not configured in backend environment variables.')
+      return res.status(500).json({ message: 'Mail server credentials are not configured on the backend. Please set RESEND_API_KEY.' })
     }
 
     const email = req.body.email?.toLowerCase().trim()
@@ -147,7 +181,6 @@ const forgotPassword = async (req, res) => {
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`
 
     const mailOptions = {
-      from: `"PropFlow Concierge" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: 'PropFlow - Secure Password Reset Request',
       html: `
@@ -163,7 +196,7 @@ const forgotPassword = async (req, res) => {
       `
     }
 
-    await transporter.sendMail(mailOptions)
+    await sendResendEmail(mailOptions)
     res.json({ message: 'If an account exists with that email, a reset link has been sent.' })
   } catch (err) {
     res.status(500).json({ message: err.message })
