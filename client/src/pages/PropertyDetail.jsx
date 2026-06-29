@@ -411,6 +411,10 @@ const OwnerAvatar = styled.div`
   font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:${C.obsidian}; flex-shrink:0;
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 `
+const OwnerAvatarImg = styled.img`
+  width:48px; height:48px; object-fit: cover; flex-shrink:0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+`
 const OwnerName = styled.div`color:${C.white}; font-size:0.9rem; font-weight:500;`
 const OwnerRole = styled.div`color:${C.muted}; font-size:0.72rem; letter-spacing:0.08em;`
 const Divider = styled.div`height:1px; background:${C.border}; margin:1rem 0;`
@@ -612,7 +616,11 @@ function PropertyDetail() {
               </SaveBtn>
               <Divider />
               <OwnerCard>
-                <OwnerAvatar>{property.owner?.name?.charAt(0) || 'V'}</OwnerAvatar>
+                {property.owner?.profileImage ? (
+                  <OwnerAvatarImg src={resolveImg(property.owner.profileImage)} alt={property.owner.name} />
+                ) : (
+                  <OwnerAvatar>{property.owner?.name?.charAt(0) || 'V'}</OwnerAvatar>
+                )}
                 <div>
                   <OwnerName>{property.owner?.name || 'Verified Owner'}</OwnerName>
                   <OwnerRole>Verified Owner · PropFlow Elite</OwnerRole>

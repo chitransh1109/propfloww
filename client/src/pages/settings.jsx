@@ -43,8 +43,51 @@ const CardTitle = styled.div`
 `
 const CardBody = styled.div`padding:2rem;`
 
+const resolveImg = (url) => {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
 const AvatarWrap = styled.div`
   display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem;
+`
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  cursor: pointer;
+  
+  &:hover .avatar-overlay {
+    opacity: 1;
+  }
+`
+const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+`
+const AvatarOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 11, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: ${C.gold};
+  opacity: 0;
+  transition: opacity 0.25s;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  text-align: center;
+  padding: 4px;
+  box-sizing: border-box;
 `
 const Avatar = styled.div`
   width:72px; height:72px;
@@ -60,6 +103,22 @@ const AvatarName = styled.div`
 `
 const AvatarRole = styled.div`
   font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:${C.muted}; margin-top:0.2rem;
+`
+const VerifiedBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212,175,55,0.06);
+  border: 1px solid ${C.gold};
+  color: ${C.gold};
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  margin-left: 0.75rem;
+  vertical-align: middle;
+  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
 `
 
 const Row = styled.div`
@@ -106,13 +165,39 @@ const LogoutBtn = styled.button`
 `
 
 const Settings = () => {
-  const { logout, login } = useAuth()
+  const { logout, login, updateProfileImage } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState('')
   const [switching, setSwitching] = useState(false)
   const [showRoleNotice, setShowRoleNotice] = useState(location.state?.roleNotice || false)
+
+  const handleAvatarClick = () => {
+    document.getElementById('avatar-input').click()
+  }
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setError('')
+    
+    const formData = new FormData()
+    formData.append('image', file)
+
+    try {
+      const { data: uploadRes } = await axiosInstance.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      const imageUrl = uploadRes.url
+      await axiosInstance.put('/auth/profile-image', { profileImage: imageUrl })
+      updateProfileImage(imageUrl)
+      setProfile(prev => (prev ? { ...prev, profileImage: imageUrl } : prev))
+    } catch (err) {
+      console.error('Upload avatar failed:', err)
+      setError(err?.response?.data?.message || 'Failed to upload profile picture.')
+    }
+  }
 
   useEffect(() => {
     axiosInstance.get('/auth/profile')
@@ -174,9 +259,30 @@ const Settings = () => {
         <CardHeader><CardTitle>Profile Overview</CardTitle></CardHeader>
         <CardBody>
           <AvatarWrap>
-            <Avatar>{displayProfile.name?.charAt(0).toUpperCase()}</Avatar>
+            <AvatarContainer onClick={handleAvatarClick}>
+              {displayProfile.profileImage ? (
+                <AvatarImage src={resolveImg(displayProfile.profileImage)} alt={displayProfile.name} />
+              ) : (
+                <Avatar>{displayProfile.name?.charAt(0).toUpperCase()}</Avatar>
+              )}
+              <AvatarOverlay className="avatar-overlay">
+                Update<br />Photo
+              </AvatarOverlay>
+            </AvatarContainer>
+            <input 
+              id="avatar-input" 
+              type="file" 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+              onChange={handleAvatarChange} 
+            />
             <AvatarInfo>
-              <AvatarName>{displayProfile.name}</AvatarName>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <AvatarName>{displayProfile.name}</AvatarName>
+                {displayProfile.profileImage && (
+                  <VerifiedBadge>✓ Verified</VerifiedBadge>
+                )}
+              </div>
               <AvatarRole>PropFlow {displayProfile.role === 'owner' ? 'Elite Owner' : 'Member'}</AvatarRole>
             </AvatarInfo>
           </AvatarWrap>

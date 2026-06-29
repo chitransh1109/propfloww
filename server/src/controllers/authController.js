@@ -73,6 +73,7 @@ const register = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      profileImage: user.profileImage,
       token: generateToken(user._id),
     })
   } catch (err) {
@@ -96,6 +97,7 @@ const login = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      profileImage: user.profileImage,
       token: generateToken(user._id),
     })
   } catch (err) {
@@ -156,6 +158,7 @@ const switchRole = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      profileImage: user.profileImage,
       token: generateToken(user._id),
     })
   } catch (err) {
@@ -231,6 +234,30 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const updateProfileImage = async (req, res) => {
+  try {
+    const { profileImage } = req.body
+    const user = await User.findById(req.user._id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' })
+    }
+
+    user.profileImage = profileImage
+    await user.save()
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage,
+      token: generateToken(user._id),
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
 module.exports = {
   register,
   login,
@@ -239,4 +266,5 @@ module.exports = {
   switchRole,
   forgotPassword,
   resetPassword,
+  updateProfileImage,
 }

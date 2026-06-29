@@ -60,11 +60,22 @@ const UserCard = styled.div`
   display:flex; align-items:center; gap:0.75rem;
   padding:0.75rem; background:${C.surface}; margin-bottom:0.75rem;
 `
+const resolveImg = (url) => {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
 const Avatar = styled.div`
   width:36px; height:36px; border-radius:50%;
   background:${C.gold}; display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:1rem; color:${C.obsidian};
   flex-shrink:0;
+`
+const AvatarImage = styled.img`
+  width: 36px; height: 36px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
 `
 const UserInfo = styled.div``
 const UserName = styled.div`color:${C.white}; font-size:0.82rem; font-weight:500;`
@@ -117,7 +128,11 @@ const Sidebar = () => {
       <BottomArea>
         {user && (
           <UserCard>
-            <Avatar>{user.name?.charAt(0).toUpperCase() || 'U'}</Avatar>
+            {user.profileImage ? (
+              <AvatarImage src={resolveImg(user.profileImage)} alt={user.name} />
+            ) : (
+              <Avatar>{user.name?.charAt(0).toUpperCase() || 'U'}</Avatar>
+            )}
             <UserInfo>
               <UserName>{user.name || 'Member'}</UserName>
               <UserRole>{user.role || 'Buyer'} · Elite</UserRole>
