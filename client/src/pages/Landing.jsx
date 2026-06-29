@@ -58,12 +58,18 @@ const Nav = styled.nav`
 `
 const Logo = styled.div`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.7rem; font-weight: 600; color: ${C.white};
+  font-size: 1.7rem; font-weight: 700; color: ${C.white};
   letter-spacing: 0.04em; cursor: pointer;
   span { color: ${C.gold}; }
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
 `
 const NavLinks = styled.div`
   display: flex; gap: 2.5rem; align-items: center;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `
 const NavLink = styled.a`
   color: ${C.muted}; font-size: 0.82rem; font-weight: 500;
@@ -88,6 +94,10 @@ const NavCTA = styled.button`
   cursor: pointer; transition: all 0.3s;
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { background: ${C.gold}; color: ${C.obsidian}; }
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.68rem;
+  }
 `
 
 // ── HERO ────────────────────────────────────────────────
@@ -137,20 +147,28 @@ const Corner = styled.div`
 const HeroContent = styled.div`
   position: relative; z-index: 3; max-width: 820px;
   animation: ${fadeUp} 0.9s ease both;
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `
 const HeroEyebrow = styled.div`
   display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+  @media (max-width: 768px) {
+    margin-bottom: 1.25rem;
+  }
 `
 const EyebrowLine = styled.div`
   height: 1px; background: ${C.gold}; animation: ${lineGrow} 1s 0.3s ease both; width: 80px;
+  @media (max-width: 768px) { width: 40px; }
 `
 const EyebrowText = styled.span`
   font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
   color: ${C.gold}; font-weight: 500;
+  @media (max-width: 768px) { font-size: 0.6rem; letter-spacing: 0.15em; }
 `
 const HeroTitle = styled.h1`
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-size: clamp(2.4rem, 7vw, 6.5rem);
   font-weight: 300; color: ${C.white};
   line-height: 1.05; letter-spacing: -0.01em;
   margin-bottom: 1.5rem;
@@ -163,12 +181,29 @@ const HeroTitle = styled.h1`
     -webkit-text-fill-color: transparent;
     animation: ${shimmerText} 3s linear infinite, ${glitch} 5s infinite;
   }
+  @media (max-width: 768px) {
+    font-size: clamp(2rem, 11vw, 3rem);
+    line-height: 1.1;
+    word-break: break-word;
+    hyphens: auto;
+  }
 `
 const HeroSub = styled.p`
   font-size: 1.05rem; color: ${C.muted}; line-height: 1.8;
   max-width: 520px; margin-bottom: 3rem; font-weight: 300;
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    max-width: 100%;
+  }
 `
-const HeroCTAs = styled.div`display: flex; gap: 1rem; align-items: center;`
+const HeroCTAs = styled.div`
+  display: flex; gap: 1rem; align-items: center;
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`
 const PrimaryBtn = styled.button`
   padding: 1rem 2.5rem;
   background: ${C.gold};

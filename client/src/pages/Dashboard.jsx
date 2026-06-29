@@ -138,7 +138,13 @@ const Tab = styled.button`
 `
 
 // ── GRIDS & CARDS ───────────────────────────────────────
-const Grid = styled.div`display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem;`
+const Grid = styled.div`
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+`
 const Card = styled.div`
   background:${C.card}; border:1px solid ${C.borderSubtle}; overflow:hidden; transition:all 0.3s;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
@@ -150,6 +156,9 @@ const CardImg = styled.div`
   display:flex; align-items:center; justify-content:center; font-size:2rem;
   transition:transform 0.4s; position:relative;
   ${Card}:hover & { transform:scale(1.02); }
+  @media (max-width: 768px) {
+    height: 110px;
+  }
 `
 const CardBadge = styled.span`
   position:absolute; top:12px; left:12px;
@@ -157,16 +166,22 @@ const CardBadge = styled.span`
   padding:0.2rem 0.6rem; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase;
   color:${C.gold}; backdrop-filter:blur(4px);
 `
-const CardBody = styled.div`padding:1.2rem 1.5rem;`
+const CardBody = styled.div`
+  padding:1.2rem 1.5rem;
+  @media (max-width: 768px) { padding: 0.65rem; }
+`
 const CardTitle = styled.h3`
   font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400;
   color:${C.white}; margin: 0 0 0.3rem;
+  @media (max-width: 768px) { font-size: 0.85rem; margin-bottom: 0.15rem; }
 `
 const CardLocation = styled.div`
   font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:${C.muted};
+  @media (max-width: 768px) { font-size: 0.56rem; }
 `
 const CardPrice = styled.div`
   font-family:'Cormorant Garamond',serif; color:${C.gold}; font-size:1.25rem; margin-top: 0.5rem;
+  @media (max-width: 768px) { font-size: 0.9rem; margin-top: 0.3rem; }
 `
 const CardFooter = styled.div`
   display:flex; justify-content:space-between; align-items:center;
