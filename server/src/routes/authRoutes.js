@@ -7,6 +7,8 @@ const {
   getProfile,
   toggleSaveProperty,
   switchRole,
+  forgotPassword,
+  resetPassword,
 } = require('../controllers/authController')
 
 const { protect } = require('../middleware/authMiddleware')
@@ -14,6 +16,10 @@ const { protect } = require('../middleware/authMiddleware')
 router.post('/register', register)
 router.post('/login', login)
 router.get('/profile', protect, getProfile)
+
+// password resets
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', resetPassword)
 
 // frontend uses POST
 router.post('/save/:id', protect, toggleSaveProperty)

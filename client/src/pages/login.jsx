@@ -375,9 +375,8 @@ function Login() {
 
     try {
       if (mode === 'forgot') {
-        // Simulated Forgot Password Request
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        setSuccess(`A password reset link has been dispatched to ${form.email}. Please verify your inbox.`)
+        const { data } = await API.post('/auth/forgot-password', { email: form.email })
+        setSuccess(data.message || `A password reset link has been dispatched to ${form.email}. Please verify your inbox.`)
         setForm(p => ({ ...p, email: '' }))
       } else {
         const endpoint = mode === 'login' ? '/auth/login' : '/auth/register'

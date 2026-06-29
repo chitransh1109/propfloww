@@ -7,6 +7,7 @@ import Layout from './components/Layout'
 // ── Lazy-loaded pages (each becomes its own chunk) ──
 const Landing = lazy(() => import('./pages/Landing'))
 const Login = lazy(() => import('./pages/login'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const PropertiesListing = lazy(() => import('./pages/PropertiesListing'))
 const PropertyDetail = lazy(() => import('./pages/PropertyDetail'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -29,6 +30,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
