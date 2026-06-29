@@ -65,10 +65,33 @@ const deleteUser = async (req, res) => {
       return res.status(400).json({ message: 'You cannot delete your own admin account.' })
     }
 
-    await user.deleteOne()
-    await Property.deleteMany({ owner: user._id })
+    // Find all properties owned by user
+    const properties = await Property.find({ owner: user._id })
 
-    res.status(200).json({ message: 'User and their properties deleted successfully' })
+    // Safely delete uploaded images from filesystem
+    const fs = require('fs')
+    const path = require('path')
+
+    properties.forEach(p => {
+      if (p.images && Array.isArray(p.images)) {
+        p.images.forEach(img => {
+          if (img.startsWith('/uploads/')) {
+            const fullPath = path.join(__dirname, '../../', img)
+            fs.unlink(fullPath, () => {})
+          }
+        })
+      }
+    })
+
+    if (user.profileImage && user.profileImage.startsWith('/uploads/')) {
+      const fullPath = path.join(__dirname, '../../', user.profileImage)
+      fs.unlink(fullPath, () => {})
+    }
+
+    await Property.deleteMany({ owner: user._id })
+    await user.deleteOne()
+
+    res.status(200).json({ message: 'User account and all associated properties and images deleted successfully' })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

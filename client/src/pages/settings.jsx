@@ -45,9 +45,15 @@ const CardBody = styled.div`padding:2rem;`
 
 const resolveImg = (url) => {
   if (!url) return null
-  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  let path = url
+  try {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      const parsed = new URL(url)
+      path = parsed.pathname
+    }
+  } catch (e) {}
   const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')
-  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
+  return `${apiHost}${path.startsWith('/') ? '' : '/'}${path}`
 }
 
 const AvatarWrap = styled.div`
