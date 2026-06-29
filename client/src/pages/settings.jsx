@@ -31,7 +31,8 @@ const PageSub = styled.p`
 const Divider = styled.div`height:1px; background:${C.border}; margin-bottom:2rem;`
 
 const Card = styled.div`
-  background:${C.card}; border:1px solid ${C.border}; margin-bottom:2px; transition:border-color 0.3s;
+  background:${C.card}; border:1px solid ${C.border}; margin-bottom: 1.5rem; transition:border-color 0.3s;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover { border-color:rgba(212,175,55,0.3); }
 `
 const CardHeader = styled.div`
@@ -46,11 +47,12 @@ const AvatarWrap = styled.div`
   display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem;
 `
 const Avatar = styled.div`
-  width:72px; height:72px; border-radius:50%;
+  width:72px; height:72px;
   background:linear-gradient(135deg, ${C.gold}, #b8940f);
   display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:2rem; color:${C.obsidian};
   flex-shrink:0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 `
 const AvatarInfo = styled.div``
 const AvatarName = styled.div`
@@ -77,12 +79,14 @@ const RoleBadge = styled.span`
   border:1px solid;
   border-color:${p => p.role === 'owner' ? 'rgba(212,175,55,0.5)' : 'rgba(99,162,255,0.5)'};
   color:${p => p.role === 'owner' ? C.gold : '#a0c4ff'};
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
 `
 
 const SwitchRoleBtn = styled.button`
   background:transparent; border:1px solid ${C.border}; color:${C.gold};
   font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase;
   padding:0.35rem 0.7rem; cursor:pointer; transition:all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   &:hover { border-color:${C.gold}; background:rgba(212,175,55,0.08); }
   &:disabled { opacity:0.5; cursor:not-allowed; }
 `
@@ -97,6 +101,7 @@ const LogoutBtn = styled.button`
   border:1px solid rgba(224,82,82,0.3); color:rgba(224,82,82,0.7);
   font-size:0.75rem; font-weight:500; letter-spacing:0.18em; text-transform:uppercase;
   cursor:pointer; transition:all 0.3s; margin-top:2px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   &:hover { background:rgba(224,82,82,0.08); border-color:#e05252; color:#e05252; }
 `
 

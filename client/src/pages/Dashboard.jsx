@@ -35,6 +35,7 @@ const HeroSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
   &::after {
     content: ''; position: absolute; top: -50%; right: -20%; width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%);
@@ -57,6 +58,7 @@ const SearchContainer = styled.div`
   display: flex; background: ${C.card}; border: 1px solid ${C.borderSubtle};
   padding: 4px; max-width: 600px; width: 100%; transition: all 0.25s;
   margin-top: 1rem;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   &:focus-within { border-color: ${C.gold}; box-shadow: 0 0 10px rgba(212,175,55,0.1); }
 `
 const SearchInput = styled.input`
@@ -70,6 +72,7 @@ const SearchBtn = styled.button`
   padding: 0 2rem; font-size: 0.72rem; font-weight: 600;
   letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
   transition: all 0.25s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   &:hover { background: ${C.goldLight}; }
 `
 
@@ -81,7 +84,13 @@ const ListPropertyBtn = styled.button`
   border:none; color:${C.obsidian};
   font-size:0.72rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
   cursor:pointer; transition:all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { background:${C.goldLight}; transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,175,55,0.3); }
+`
+
+const borderPulse = keyframes`
+  0%, 100% { border-color: rgba(212,175,55,0.12); box-shadow: none; }
+  50% { border-color: ${C.gold}; box-shadow: 0 0 12px rgba(212,175,55,0.15); }
 `
 
 // ── STATS ROW ───────────────────────────────────────────
@@ -94,6 +103,8 @@ const StatCard = styled.div`
   border: 1px solid rgba(212,175,55,0.12);
   padding: 2rem 2.2rem;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  animation: ${borderPulse} 5s infinite ease-in-out;
   &:hover {
     border-color: ${C.gold};
     transform: translateY(-4px);
@@ -130,6 +141,7 @@ const Tab = styled.button`
 const Grid = styled.div`display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem;`
 const Card = styled.div`
   background:${C.card}; border:1px solid ${C.borderSubtle}; overflow:hidden; transition:all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover { border-color:${C.border}; transform:translateY(-3px); box-shadow:0 20px 50px rgba(0,0,0,0.4); }
 `
 const CardImg = styled.div`
@@ -164,6 +176,7 @@ const ViewBtn = styled.button`
   padding:0.4rem 1rem; background:transparent; border:1px solid ${C.borderSubtle};
   color:${C.muted}; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase;
   cursor:pointer; transition:all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   &:hover { border-color:${C.gold}; color:${C.gold}; }
 `
 const RemoveBtn = styled(ViewBtn)`
@@ -211,6 +224,7 @@ const ActionBtn = styled.button`
   border:1px solid ${C.borderSubtle}; color:${C.muted};
   font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase;
   cursor:pointer; transition:all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   &:hover { border-color:${C.gold}; color:${C.gold}; }
 `
 const DeleteBtn = styled(ActionBtn)`
@@ -341,6 +355,7 @@ const Modal = styled.div`
   background:${C.surface}; border:1px solid ${C.border};
   width:100%; max-width:640px; max-height:90vh; overflow-y:auto;
   padding:2.5rem;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
   &::-webkit-scrollbar { width:3px; }
   &::-webkit-scrollbar-thumb { background:${C.border}; }
 `
@@ -348,6 +363,7 @@ const ConfirmCard = styled.div`
   background:${C.surface}; border:1px solid ${C.border};
   width:100%; max-width:400px; padding:2.5rem; text-align:center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
 `
 const ModalTitle = styled.h2`
   font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300;
@@ -361,31 +377,32 @@ const Label = styled.label`
   color:${C.muted}; margin-bottom:0.45rem;
 `
 const Input = styled.input`
-  width:100%; padding:0.85rem 0.5rem; background:transparent; border:none; border-bottom:1px solid ${C.borderSubtle};
+  width:100%; padding:0.85rem 1rem; background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06);
   color:${C.white}; font-size:0.88rem; outline:none; font-family:'Inter',sans-serif;
-  transition:all 0.25s; box-sizing:border-box; border-radius:0;
+  transition:all 0.25s; box-sizing:border-box; border-radius:4px;
   &::placeholder { color:${C.muted}; }
-  &:focus { border-color:${C.gold}; }
+  &:focus { border-color:${C.gold}; background:rgba(212,175,55,0.03); }
 `
 const Select = styled.select`
-  width:100%; padding:0.85rem 0.5rem; background:transparent; border:none; border-bottom:1px solid ${C.borderSubtle};
+  width:100%; padding:0.85rem 1rem; background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06);
   color:${C.white}; font-size:0.88rem; outline:none; font-family:'Inter',sans-serif; cursor:pointer;
-  transition:all 0.25s; border-radius:0;
+  transition:all 0.25s; border-radius:4px;
   option { background: ${C.ink}; color: ${C.white}; }
-  &:focus { border-color:${C.gold}; }
+  &:focus { border-color:${C.gold}; background:rgba(212,175,55,0.03); }
 `
 const Textarea = styled.textarea`
-  width:100%; padding:0.85rem 0.5rem; background:transparent; border:none; border-bottom:1px solid ${C.borderSubtle};
+  width:100%; padding:0.85rem 1rem; background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06);
   color:${C.white}; font-size:0.88rem; outline:none; resize:vertical; min-height:80px;
-  font-family:'Inter',sans-serif; box-sizing:border-box; transition:all 0.25s; border-radius:0;
+  font-family:'Inter',sans-serif; box-sizing:border-box; transition:all 0.25s; border-radius:4px;
   &::placeholder { color:${C.muted}; }
-  &:focus { border-color:${C.gold}; }
+  &:focus { border-color:${C.gold}; background:rgba(212,175,55,0.03); }
 `
 const ModalBtns = styled.div`display:flex; gap:1rem; margin-top:1.5rem;`
 const SaveBtn = styled.button`
   flex:1; padding:0.9rem; background:${C.gold}; border:none;
   color:${C.obsidian}; font-size:0.75rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
   cursor:pointer; transition:all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { background:${C.goldLight}; }
   &:disabled { opacity:0.5; cursor:not-allowed; }
 `
@@ -393,6 +410,7 @@ const CancelBtn = styled.button`
   flex:1; padding:0.9rem; background:transparent; border:1px solid ${C.borderSubtle};
   color:${C.muted}; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase;
   cursor:pointer; transition:all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { border-color:${C.gold}; color:${C.gold}; }
 `
 const ErrMsg = styled.div`

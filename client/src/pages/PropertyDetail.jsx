@@ -212,7 +212,13 @@ const BackBtn = styled.button`
   display:flex; align-items:center; gap:0.5rem;
   font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase;
   color:${C.muted}; transition:color 0.2s;
+  position: relative;
+  &::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px;
+    background: ${C.gold}; transition: width 0.3s ease;
+  }
   &:hover { color:${C.gold}; }
+  &:hover::after { width: 100%; }
 `
 
 const Layout = styled.div`display:grid; grid-template-columns:1fr 380px; gap:2.5rem; align-items:start;`
@@ -227,6 +233,7 @@ const MainImg = styled.div`
   background:${p => p.src ? `url(${p.src}) center/cover` : C.card};
   border: 1px solid ${C.borderSubtle};
   transition: border-color 0.3s;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover { border-color: ${C.gold}; }
 `
 const Thumbs = styled.div`display:flex; flex-direction:column; gap:3px;`
@@ -236,6 +243,7 @@ const Thumb = styled.div`
   display:flex; align-items:center; justify-content:center;
   opacity:${p => p.active ? 1 : 0.45}; transition:all 0.25s;
   border-left:2px solid ${p => p.active ? C.gold : 'transparent'};
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   &:hover { opacity:1; }
 `
 
@@ -245,6 +253,7 @@ const InfoCard = styled.div`
   padding:2.5rem; margin-bottom:2rem;
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   position: relative;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &::after {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
     background: linear-gradient(90deg, transparent, ${C.gold}, transparent);
@@ -255,6 +264,7 @@ const StatusBadge = styled.span`
   font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; font-weight:600;
   border:1px solid ${p => p.type === 'rent' ? 'rgba(99,162,255,0.5)' : C.gold};
   color:${p => p.type === 'rent' ? '#a0c4ff' : C.gold};
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
 `
 const Title = styled.h1`
   font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300;
@@ -272,6 +282,7 @@ const ChipRow = styled.div`display:flex; gap:0.5rem; flex-wrap:wrap;`
 const Chip = styled.span`
   padding:0.25rem 0.8rem; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase;
   color:${C.mutedLight}; border:1px solid ${C.borderSubtle};
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
 `
 
 /* ── TABS ── */
@@ -288,6 +299,7 @@ const Tab = styled.button`
 `
 const TabCard = styled.div`
   background:${C.card}; border:1px solid ${C.border}; padding:2rem;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
 `
 const TabContent = styled.div`
   color:${C.mutedLight}; font-size:0.9rem; line-height:1.9;
@@ -296,6 +308,7 @@ const AmenityWrap = styled.div`display:flex; flex-wrap:wrap; gap:0.5rem;`
 const AmenityTag = styled.span`
   padding:0.35rem 1rem; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase;
   color:${C.gold}; border:1px solid ${C.border};
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
 `
 
 /* ── MAP ── */
@@ -303,6 +316,7 @@ const MapContainer = styled.div`
   width:100%; height:320px; margin-top:1rem;
   border:1px solid ${C.border}; overflow:hidden;
   position:relative;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 `
 const MapIframe = styled.iframe`
   width:100%; height:100%; border:0;
@@ -323,16 +337,19 @@ const DirectionsBtn = styled.a`
   border:1px solid ${C.gold}; color:${C.gold};
   font-size:0.68rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
   text-decoration:none; transition:all 0.25s;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   &:hover { background:${C.gold}; color:${C.obsidian}; }
 `
 const NoMapMsg = styled.div`
   padding:2.5rem; text-align:center; color:${C.muted};
   font-size:0.85rem; border:1px dashed ${C.borderSubtle}; margin-top:1rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 `
 
 /* ── ENQUIRY CARD ── */
 const EnquiryCard = styled.div`
   background:${C.surface}; border:1px solid ${C.border}; padding:2rem;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
 `
 const EnquiryEyebrow = styled.div`
   font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase;
@@ -344,25 +361,26 @@ const EnquiryTitle = styled.h3`
 `
 const Input = styled.input`
   width:100%; padding:0.8rem 1rem; margin-bottom:0.75rem;
-  background:${C.card}; border:1px solid ${C.borderSubtle};
+  background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06);
   color:${C.white}; font-size:0.88rem; outline:none;
-  font-family:'Inter',sans-serif; transition:all 0.25s;
+  font-family:'Inter',sans-serif; transition:all 0.25s; border-radius:4px;
   &::placeholder { color:${C.muted}; }
-  &:focus { border-color:${C.gold}; }
+  &:focus { border-color:${C.gold}; background:rgba(212,175,55,0.03); }
 `
 const Textarea = styled.textarea`
   width:100%; padding:0.8rem 1rem; margin-bottom:0.75rem;
-  background:${C.card}; border:1px solid ${C.borderSubtle};
+  background:rgba(255, 255, 255, 0.02); border:1px solid rgba(255, 255, 255, 0.06);
   color:${C.white}; font-size:0.88rem; outline:none; resize:vertical; min-height:90px;
-  font-family:'Inter',sans-serif; transition:all 0.25s;
+  font-family:'Inter',sans-serif; transition:all 0.25s; border-radius:4px;
   &::placeholder { color:${C.muted}; }
-  &:focus { border-color:${C.gold}; }
+  &:focus { border-color:${C.gold}; background:rgba(212,175,55,0.03); }
 `
 const SubmitBtn = styled.button`
   width:100%; padding:1rem; background:${C.gold}; border:none;
   color:${C.obsidian}; font-size:0.78rem; font-weight:600;
   letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; transition:all 0.3s;
   margin-bottom:0.75rem;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   &:hover { background:${C.goldLight}; transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,175,55,0.3); }
   &:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
 `
@@ -371,6 +389,7 @@ const SaveBtn = styled.button`
   border:1px solid ${C.border}; color:${C.muted};
   font-size:0.78rem; font-weight:500; letter-spacing:0.15em; text-transform:uppercase;
   cursor:pointer; transition:all 0.25s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   &:hover { border-color:${C.gold}; color:${C.gold}; }
 `
 const SuccessMsg = styled.div`
@@ -384,11 +403,13 @@ const ErrMsg = styled.div`
 const OwnerCard = styled.div`
   background:${C.card}; border:1px solid ${C.border};
   padding:1.5rem; margin-top:1rem; display:flex; align-items:center; gap:1rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 `
 const OwnerAvatar = styled.div`
-  width:48px; height:48px; border-radius:50%;
+  width:48px; height:48px;
   background:${C.gold}; display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:${C.obsidian}; flex-shrink:0;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 `
 const OwnerName = styled.div`color:${C.white}; font-size:0.9rem; font-weight:500;`
 const OwnerRole = styled.div`color:${C.muted}; font-size:0.72rem; letter-spacing:0.08em;`

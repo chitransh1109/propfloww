@@ -38,7 +38,7 @@ const FilterToggleBtn = styled.button`
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  border-radius: 6px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
@@ -56,11 +56,11 @@ const FilterDropdown = styled.div`
   right: 0;
   z-index: 150;
   width: 380px;
-  background: rgba(13, 13, 16, 0.92);
+  background: rgba(13, 13, 16, 0.85);
   border: 1px solid rgba(212, 175, 55, 0.15);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(40px);
-  border-radius: 12px;
+  backdrop-filter: blur(25px);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
@@ -142,7 +142,7 @@ const SearchInput = styled.input`
   outline: none;
   font-family: 'Inter', sans-serif; 
   transition: all 0.25s ease;
-  border-radius: 8px;
+  border-radius: 4px;
   &::placeholder { color: ${C.muted}; }
   &:focus { 
     border-color: ${C.gold}; 
@@ -162,7 +162,7 @@ const Select = styled.select`
   font-family: 'Inter', sans-serif; 
   cursor: pointer; 
   transition: all 0.25s ease;
-  border-radius: 8px;
+  border-radius: 4px;
   option { background: ${C.ink}; color: ${C.white}; }
   &:focus { 
     border-color: ${C.gold}; 
@@ -196,7 +196,7 @@ const ToggleBtn = styled.button`
   text-transform: uppercase;
   cursor: pointer; 
   transition: all 0.25s ease;
-  border-radius: 6px;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   background: ${p => p.$active ? 'rgba(212, 175, 55, 0.12)' : 'rgba(255, 255, 255, 0.02)'};
   color: ${p => p.$active ? C.gold : C.muted};
   &:hover { 
@@ -217,7 +217,7 @@ const ClearBtn = styled.button`
   text-transform: uppercase;
   cursor: pointer; 
   transition: all 0.2s;
-  border-radius: 6px;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
   &:hover { 
     background: rgba(224, 82, 82, 0.08); 
     border-color: #e05252; 
@@ -239,7 +239,7 @@ const SortToggleBtn = styled.button`
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  border-radius: 6px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
@@ -257,11 +257,11 @@ const SortDropdownList = styled.div`
   right: 0;
   z-index: 160;
   min-width: 200px;
-  background: rgba(13, 13, 16, 0.95);
+  background: rgba(13, 13, 16, 0.9);
   border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(25px);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   padding: 0.5rem 0;
   margin-top: 0.5rem;
   display: flex;
@@ -312,6 +312,7 @@ const Card = styled.div`
   background: ${C.card}; cursor: pointer; position: relative; overflow: hidden;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid rgba(255, 255, 255, 0.03);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover { 
     transform: translateY(-6px); 
     box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 0 20px rgba(212,175,55,0.08); 
