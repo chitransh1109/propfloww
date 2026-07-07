@@ -13,7 +13,7 @@ A full-stack real estate platform where property owners can list properties and 
 - **Property CRUD** — owners can create, edit, and delete listings with image uploads
 - **Property browsing & search** — buyers can browse and filter available listings
 - **Saved/favorited properties** for buyers
-- **Image uploads** via Multer
+- **Image uploads** via cloudinary
 - **Protected routes** on the frontend, enforced both client-side and via backend middleware
 - **Responsive React UI** with a custom dark/gold themed design system (styled-components)
 
