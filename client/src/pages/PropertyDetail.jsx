@@ -287,6 +287,9 @@ const InfoCard = styled.div`
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   position: relative;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  @media (max-width: 600px) {
+    padding: 1.25rem;
+  }
   &::after {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
     background: linear-gradient(90deg, transparent, ${C.gold}, transparent);
@@ -383,6 +386,9 @@ const NoMapMsg = styled.div`
 const EnquiryCard = styled.div`
   background:${C.surface}; border:1px solid ${C.border}; padding:2rem;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  @media (max-width: 600px) {
+    padding: 1.25rem;
+  }
 `
 const EnquiryEyebrow = styled.div`
   font-size:0.65rem; letter-spacing:0.22em; text-transform:uppercase;

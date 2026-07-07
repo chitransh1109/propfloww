@@ -37,11 +37,19 @@ const Card = styled.div`
 `
 const CardHeader = styled.div`
   padding:1.5rem 2rem; border-bottom:1px solid ${C.borderSubtle};
+  @media (max-width: 600px) {
+    padding: 1.25rem 1.5rem;
+  }
 `
 const CardTitle = styled.div`
   font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:${C.gold};
 `
-const CardBody = styled.div`padding:2rem;`
+const CardBody = styled.div`
+  padding:2rem;
+  @media (max-width: 600px) {
+    padding: 1.25rem;
+  }
+`
 
 const resolveImg = (url) => {
   if (!url || typeof url !== 'string') return null

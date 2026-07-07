@@ -97,6 +97,7 @@ const borderPulse = keyframes`
 const StatsRow = styled.div`
   display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-bottom:3rem;
   @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; gap: 1rem; }
 `
 const StatCard = styled.div`
   background: linear-gradient(135deg, rgba(28,28,34,0.6) 0%, rgba(17,17,20,0.85) 100%);
@@ -105,6 +106,9 @@ const StatCard = styled.div`
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative;
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   animation: ${borderPulse} 5s infinite ease-in-out;
+  @media (max-width: 600px) {
+    padding: 1.25rem 1.5rem;
+  }
   &:hover {
     border-color: ${C.gold};
     transform: translateY(-4px);
@@ -272,6 +276,9 @@ const LeadCard = styled.div`
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   position: relative;
   transition: all 0.3s;
+  @media (max-width: 600px) {
+    padding: 1rem;
+  }
   &:hover {
     border-color: ${C.gold};
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);

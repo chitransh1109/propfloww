@@ -275,7 +275,7 @@ const StatsStrip = styled.div`
   border-bottom: 1px solid ${C.border};
   padding: 3.5rem 5vw;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 2rem;
   text-align: center;
   position: relative;
@@ -289,9 +289,6 @@ const StatsStrip = styled.div`
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
     animation: ${borderPulse} 4s infinite ease-in-out;
-  }
-  @media(max-width:600px) {
-    grid-template-columns: 1fr;
   }
 `
 const StripStat = styled.div`
@@ -344,26 +341,34 @@ const SectionLink = styled.button`
   &:hover { gap: 1rem; }
 `
 const PropertiesGrid = styled.div`
-  display: flex; flex-direction: column; gap: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  @media(max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media(max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
 `
 const PropertyCard = styled.div`
-  display: flex; background: ${C.card}; border: 1px solid ${C.borderSubtle};
+  background: ${C.card}; border: 1px solid ${C.borderSubtle};
   position: relative; overflow: hidden; cursor: pointer;
-  min-height: 280px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
   &:hover {
     border-color: ${C.gold};
     box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 0 20px rgba(212,175,55,0.05);
     transform: translateY(-4px);
   }
-  @media(max-width: 768px) {
-    flex-direction: column;
-  }
 `
 const PropertyImgWrap = styled.div`
-  width: 42%; position: relative; overflow: hidden;
+  width: 100%; height: 220px; position: relative; overflow: hidden;
   @media(max-width: 768px) {
-    width: 100%; height: 220px;
+    height: 140px;
   }
 `
 const PropertyImg = styled.img`
@@ -373,47 +378,71 @@ const PropertyImg = styled.img`
 `
 const PropertyOverlay = styled.div`
   position: absolute; inset: 0;
-  background: linear-gradient(to right, rgba(10,10,11,0.95) 0%, transparent 100%);
-  opacity: 0.7; transition: opacity 0.4s;
-  ${PropertyCard}:hover & { opacity: 0.85; }
-  @media(max-width: 768px) {
-    background: linear-gradient(to top, rgba(10,10,11,0.95) 0%, transparent 100%);
-  }
+  background: linear-gradient(to top, rgba(10,10,11,0.85) 0%, transparent 60%);
 `
 const PropertyInfo = styled.div`
-  width: 58%; padding: 3rem; position: relative;
+  width: 100%; padding: 1.5rem; position: relative;
   display: flex; flex-direction: column; justify-content: center;
   z-index: 1;
   @media(max-width: 768px) {
-    width: 100%; padding: 2rem;
+    padding: 0.6rem;
   }
 `
 const GhostNumber = styled.div`
   position: absolute; right: 2rem; bottom: -1rem;
   font-family: 'Cormorant Garamond', serif; font-size: 9rem; font-weight: 700;
   color: rgba(255,255,255,0.015); pointer-events: none; line-height: 1; z-index: 0;
+  @media(max-width: 768px) {
+    display: none;
+  }
 `
 const PropertyBadge = styled.span`
   align-self: flex-start; padding: 0.25rem 0.8rem; margin-bottom: 1.25rem;
   border: 1px solid ${C.gold}; color: ${C.gold};
   font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
   background: rgba(212,175,55,0.05);
+  @media(max-width: 768px) {
+    margin-bottom: 0.4rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.5rem;
+  }
 `
 const PropertyTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.6rem; font-weight: 400; color: ${C.white};
   margin-bottom: 0.4rem; line-height: 1.2;
+  @media(max-width: 768px) {
+    font-size: 0.82rem;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 const PropertyLocation = styled.div`
   font-size: 0.75rem; color: rgba(255,255,255,0.5); letter-spacing: 0.1em;
   margin-bottom: 1.25rem;
+  @media(max-width: 768px) {
+    font-size: 0.55rem;
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 const PropertyPrice = styled.div`
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.8rem; color: ${C.gold}; font-weight: 500; margin-bottom: 1.25rem;
+  @media(max-width: 768px) {
+    font-size: 0.88rem;
+    margin-bottom: 0.4rem;
+  }
 `
 const PropertyChips = styled.div`
   display: flex; gap: 0.5rem; flex-wrap: wrap; z-index: 2;
+  @media(max-width: 768px) {
+    display: none;
+  }
 `
 const PChip = styled.span`
   font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -476,6 +505,10 @@ const OwnerBio = styled.p`
 const OwnerStats = styled.div`
   display: flex; gap: 2.5rem; margin-bottom: 2.5rem;
   padding: 1.5rem 0; border-top: 1px solid ${C.border}; border-bottom: 1px solid ${C.border};
+  @media (max-width: 480px) {
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
 `
 const OwnerStat = styled.div``
 const OwnerStatNum = styled.div`
@@ -709,11 +742,11 @@ export default function Landing() {
           <NavLink onClick={() => goProtected('/properties')}>Properties</NavLink>
           <NavLink onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}>About</NavLink>
           <NavLink onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Contact</NavLink>
-          {user
-            ? <NavCTA onClick={goToDashboard}>My Dashboard</NavCTA>
-            : <NavCTA onClick={() => navigate('/login')}>Sign In</NavCTA>
-          }
         </NavLinks>
+        {user
+          ? <NavCTA onClick={goToDashboard}>My Dashboard</NavCTA>
+          : <NavCTA onClick={() => navigate('/login')}>Sign In</NavCTA>
+        }
       </Nav>
 
       {/* HERO */}
