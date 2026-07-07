@@ -1,0 +1,58 @@
+67919a6 Initial commit: PropFloww full-stack real estate platform
+27f0115 Use VITE_API_URL env var for API base URL instead of hardcoded localhost
+0568bfe Force IPv4 DNS resolution to fix Render's broken outbound IPv6 route to Gmail SMTP
+0cbb4ca Add SPA rewrite rule for Vercel client-side routing
+b6104f8 fix: switch Gmail SMTP port to 587 for Render compatibility
+920c221 fix: add OTP fallback to client and server to bypass cloud provider SMTP blocks
+3de4f8f debug: log request method and URL in axios request interceptor
+ba578f7 fix: resolve ReferenceError by scoping otp variable outside try block
+7ce476c feat: switch to Resend HTTP API for emails and remove on-screen OTP fallback
+cbe173e feat: restore standard SMTP configuration and remove Resend
+0e61504 feat: switch to Postmark HTTP API and remove SMTP blocks
+73c2934 feat: completely remove OTP verification feature from project
+f41b1f6 bugfix: implement 10 detailed UI and UX fixes across pages
+c327a56 fix: restore merged BOGUS properties on listing page
+2d052a4 fix: map all 9 bogus properties and resolve image URLs properly in PropertyDetail.jsx
+fbbca9b design: upgrade Landing.jsx with a futuristic aesthetic and layout
+1f3b92c design: upgrade interior pages with matching futuristic UI styling
+aec8650 fix: address login form bugs and add UX features like password toggle, validation, forgot password flow, and loading state
+919346a feat: implement real forgot password flow and secure reset-password page using nodemailer
+1a48bcf fix: prevent infinite mail connection hang by configuring timeouts and validation checks
+3faf97b fix: force SMTP connection over IPv4 to prevent Render ENETUNREACH errors
+ad5e1ee fix: resolve SMTP configuration conflict by using service only with IPv4 family option
+9e0caab feat: migrate mailer from SMTP to Resend API over HTTPS
+7e3436a perf: load bogus demo properties instantly on the client without hitting backend API
+44f5bc3 feat: implement profile image upload feature with verified profile badges
+0cdd0ab feat: make avatars circular and implement administrative dashboard routes and moderation panel UI
+db520ed feat: enforce admin-only login validations and redirections for administrative routes
+4dc5fa8 feat: implement inline re-authentication password verify gate for admin URL access
+634ea5f feat: hide Platform Admin dashboard link from sidebar navigation menu
+c4bed20 feat: embed dedicated Admin Sign In form directly on the /admin route without login redirect
+070549d feat: isolate Admin Portal login session from main website auth state
+27a26fb feat: eliminate sessionStorage caching to enforce admin login on every page reload
+83d021e feat: move admin route outside ProtectedRoute to enable public admin portal view direct access
+b97e7c5 feat: implement self-service delete account feature on settings page to purge user profile, listings, and images
+e1b6ff1 feat: implement robust image path resolver across all pages and update admin deleteUser to purge database records and unlink images
+aeda198 feat: complete mobile responsiveness overhaul across layouts, grids, headers, forms, and admin dashboard tables
+f124e20 feat: mobile card 2-column grid, smaller card sizes, bold logo, and fix landing page hero text overflow on small screens
+8747f57 fix: switch mobile cards to 1-per-row Airbnb-style layout — image on top, details below, full width
+a82b996 feat: replace local disk storage with Cloudinary permanent cloud image storage
+24ad589 fix: resolveImg now returns Cloudinary https URLs as-is, fixes profile/property images not showing; fix profile cache not clearing on avatar upload
+acac72c fix: 2-col mobile grid, iOS zoom prevention (viewport + 16px inputs), overflow-x fix, safe-area-inset for iPhone notch
+194797a feat: implement OTP email verification — register sends 6-digit code, login blocks unverified accounts, verify-otp and resend-otp endpoints + UI with countdown
+5a77985 fix: make resolveImg function robust to non-string image urls to prevent blank/black page crash in layout and listing
+4528a2e feat: login no longer checks for isVerified, and log generated OTP in backend server logs
+d03c212 feat: bypass Resend sandbox limit gracefully during verification — output OTP on frontend screen if email fails to deliver, bypass verify requirement during login
+f2a2ad5 fix: change email from address to standard onboarding@resend.dev to avoid spam/delivery issues
+0878e66 feat: replace Resend with Nodemailer (Gmail SMTP) for 100% reliable OTP verification delivery to any entered email address
+4ad0c16 fix: make email sending non-blocking to prevent registration hang
+f675805 debug: add test-mail endpoint to check server SMTP environment variables and logs
+c79d7ec fix: revert to Resend HTTP API to bypass Render outbound SMTP port block, keeping it non-blocking
+dcbe88f feat: complete custom verified domain integration propfloww.online for emails, remove sandbox code banner
+42e435f feat: switch role to owner silently in the background when buyer clicks list property
+8219223 debug: add warning log in forgotPassword for non-existent emails
+7ae8209 feat: implement real database leads storage and show Buyer Enquiries tab on owner dashboard
+0b0c63d ux: auto-fill buyer name and email in property detail enquiry form when logged in
+2702fa2 feat: protect admin route under ProtectedRoute wrapper, add luxury 404 page for unmatched routes
+6dacdcd chore: remove debug API call log from production axios request interceptor
+ab0212a feat: implement automatic logout redirect on 401 token expiry with user friendly expired warning
